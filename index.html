@@ -84,7 +84,7 @@ button:disabled{opacity:.45}
 <script>
 const CATS=["back","abs","chest","shoulder","arms","legs"];
 const ICONS={back:"🧗",abs:"🔥",chest:"🏋️",shoulder:"🤾",arms:"💪",legs:"🦵"};
-const DAILY=[["abripper","AbRipper X","⚡️"],["p2p","P2P push-up workout","🤸"],["steps","Steps","👟"]];
+const DAILY=[["abripper","AbRipper X","⚡️"],["p2p","P2P push-up workout","🤸"]];
 const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const FULL=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const KEY="gymTracker.v1";
@@ -102,8 +102,8 @@ function availableFor(target){
   while(key(d)<tk){const c=(S.log[key(d)]||{}).checked||[];pool=pool.filter(x=>!c.includes(x));if(!pool.length)pool=[...CATS];d=addDays(d,1)}
   return pool;
 }
-const getEntry=k=>{const e=S.log[k]||{checked:[],daily:{}};e.checked=e.checked||[];e.daily=e.daily||{};if(e.steps){e.daily.steps=true;delete e.steps}return e};
-const anyDone=k=>{const e=S.log[k];return e&&((e.checked||[]).length||(e.protein||[]).length||Object.values(e.daily||{}).some(Boolean))};
+const getEntry=k=>{const e=S.log[k]||{checked:[],daily:{}};e.checked=e.checked||[];e.daily=e.daily||{};delete e.steps;delete e.daily.steps;return e};
+const anyDone=k=>{const e=S.log[k];return e&&((e.checked||[]).length||(e.protein||[]).length||(e.stepsLog||[]).length||Object.values(e.daily||{}).some(Boolean))};
 function render(){
   const day=addDays(mon,sel),k=key(day),future=k>TK,entry=getEntry(k),avail=availableFor(day);
   document.getElementById("eyebrow").textContent=k===TK?"Today":future?"Upcoming":"Past";
@@ -129,14 +129,19 @@ function render(){
     b.onclick=()=>{if(done){if(!confirm("Undo "+c+" for "+FULL[sel]+"?"))return;entry.checked=entry.checked.filter(x=>x!==c)}else{entry.checked.push(c);buzz()}
       popId=c;S.log[k]=entry;save();render()};grid.appendChild(b)});
   main.appendChild(grid);
-  const h3=document.createElement("div");h3.className="section";h3.innerHTML="<span>Protein</span><span>today</span>";main.appendChild(h3);
-  const pr=document.createElement("div");pr.className="protein";entry.protein=entry.protein||[];
-  const tot=entry.protein.reduce((a,b)=>a+b,0);
-  pr.innerHTML='<div class="ptotal"><span class="v'+(popId==="protein"?" pop":"")+'" style="display:inline-block">'+tot+'</span><span class="u">g</span>'+(entry.protein.length&&!future?'<button class="undo">Undo '+entry.protein[entry.protein.length-1]+'g</button>':'')+'</div><div class="pbtns"></div>';
-  [20,40,80].forEach(g=>{const b=document.createElement("button");b.className="pbtn";b.disabled=future;b.innerHTML="+"+g+"<small>g</small>";
-    b.onclick=()=>{entry.protein.push(g);buzz();popId="protein";S.log[k]=entry;save();render()};pr.querySelector(".pbtns").appendChild(b)});
-  const u=pr.querySelector(".undo");if(u)u.onclick=()=>{entry.protein.pop();S.log[k]=entry;save();render()};
-  main.appendChild(pr);
+  const counter=(field,title,unit,amounts,fmt)=>{
+    const hh=document.createElement("div");hh.className="section";hh.innerHTML="<span>"+title+"</span><span>today</span>";main.appendChild(hh);
+    const pr=document.createElement("div");pr.className="protein";entry[field]=entry[field]||[];
+    const arr=entry[field],tot=arr.reduce((a,b)=>a+b,0);
+    pr.innerHTML='<div class="ptotal"><span class="v'+(popId===field?" pop":"")+'" style="display:inline-block">'+fmt(tot)+'</span><span class="u">'+unit+'</span>'+(arr.length&&!future?'<button class="undo">Undo '+fmt(arr[arr.length-1])+'</button>':'')+'</div><div class="pbtns"></div>';
+    amounts.forEach(g=>{const b=document.createElement("button");b.className="pbtn";b.disabled=future;b.innerHTML="+"+fmt(g)+(unit==="g"?"<small>g</small>":"");
+      b.onclick=()=>{arr.push(g);buzz();popId=field;S.log[k]=entry;save();render()};pr.querySelector(".pbtns").appendChild(b)});
+    const u=pr.querySelector(".undo");if(u)u.onclick=()=>{arr.pop();S.log[k]=entry;save();render()};
+    main.appendChild(pr);
+  };
+  const n=x=>x.toLocaleString("en-US");
+  counter("protein","Protein","g",[20,40,80],n);
+  counter("stepsLog","Steps","steps",[4000,6000,10000],n);
   const h2=document.createElement("div");h2.className="section";h2.innerHTML="<span>Every day</span>";main.appendChild(h2);
   const list=document.createElement("div");list.className="list";
   DAILY.forEach(([id,label,ic])=>{const done=!!entry.daily[id],b=document.createElement("button");
