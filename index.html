@@ -58,6 +58,15 @@ button:disabled{opacity:.45}
 .banner .big{font-size:34px}.banner p{margin:8px 0 0;color:#cfe;font-weight:600}
 .note{color:var(--muted);font-size:13px;text-align:center;margin:18px 10px 0;line-height:1.45}
 .reset{display:block;margin:26px auto 0;background:none;border:0;color:#5a627a;font:inherit;font-size:13px;padding:10px}
+.protein{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:26px}
+.ptotal{display:flex;align-items:baseline;gap:6px;margin-bottom:14px}
+.ptotal .v{font-size:44px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,#2fd47a,#5b8cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ptotal .u{font-size:18px;font-weight:700;color:var(--muted)}
+.ptotal .undo{margin-left:auto;background:var(--card2);border:1px solid var(--line);color:var(--muted);font:inherit;font-size:13px;font-weight:600;border-radius:12px;padding:8px 12px}
+.pbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pbtn{border:0;border-radius:16px;padding:18px 0;font:inherit;font-size:20px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 6px 16px rgba(91,140,255,.25);transition:transform .12s}
+.pbtn small{font-size:13px;font-weight:600;opacity:.85}
+.pbtn:active{transform:scale(.95)}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
 .pop{animation:pop .3s ease}
 </style></head><body>
@@ -94,7 +103,7 @@ function availableFor(target){
   return pool;
 }
 const getEntry=k=>{const e=S.log[k]||{checked:[],daily:{}};e.checked=e.checked||[];e.daily=e.daily||{};if(e.steps){e.daily.steps=true;delete e.steps}return e};
-const anyDone=k=>{const e=S.log[k];return e&&((e.checked||[]).length||Object.values(e.daily||{}).some(Boolean))};
+const anyDone=k=>{const e=S.log[k];return e&&((e.checked||[]).length||(e.protein||[]).length||Object.values(e.daily||{}).some(Boolean))};
 function render(){
   const day=addDays(mon,sel),k=key(day),future=k>TK,entry=getEntry(k),avail=availableFor(day);
   document.getElementById("eyebrow").textContent=k===TK?"Today":future?"Upcoming":"Past";
@@ -120,6 +129,14 @@ function render(){
     b.onclick=()=>{if(done){if(!confirm("Undo "+c+" for "+FULL[sel]+"?"))return;entry.checked=entry.checked.filter(x=>x!==c)}else{entry.checked.push(c);buzz()}
       popId=c;S.log[k]=entry;save();render()};grid.appendChild(b)});
   main.appendChild(grid);
+  const h3=document.createElement("div");h3.className="section";h3.innerHTML="<span>Protein</span><span>today</span>";main.appendChild(h3);
+  const pr=document.createElement("div");pr.className="protein";entry.protein=entry.protein||[];
+  const tot=entry.protein.reduce((a,b)=>a+b,0);
+  pr.innerHTML='<div class="ptotal"><span class="v'+(popId==="protein"?" pop":"")+'" style="display:inline-block">'+tot+'</span><span class="u">g</span>'+(entry.protein.length&&!future?'<button class="undo">Undo '+entry.protein[entry.protein.length-1]+'g</button>':'')+'</div><div class="pbtns"></div>';
+  [20,40,80].forEach(g=>{const b=document.createElement("button");b.className="pbtn";b.disabled=future;b.innerHTML="+"+g+"<small>g</small>";
+    b.onclick=()=>{entry.protein.push(g);buzz();popId="protein";S.log[k]=entry;save();render()};pr.querySelector(".pbtns").appendChild(b)});
+  const u=pr.querySelector(".undo");if(u)u.onclick=()=>{entry.protein.pop();S.log[k]=entry;save();render()};
+  main.appendChild(pr);
   const h2=document.createElement("div");h2.className="section";h2.innerHTML="<span>Every day</span>";main.appendChild(h2);
   const list=document.createElement("div");list.className="list";
   DAILY.forEach(([id,label,ic])=>{const done=!!entry.daily[id],b=document.createElement("button");
