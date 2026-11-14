@@ -64,7 +64,7 @@ button:disabled{opacity:.45}
 .ptotal .u{font-size:18px;font-weight:700;color:var(--muted)}
 .ptotal .undo{margin-left:auto;background:var(--card2);border:1px solid var(--line);color:var(--muted);font:inherit;font-size:13px;font-weight:600;border-radius:12px;padding:8px 12px}
 .hsync{color:var(--muted);font-size:13px;font-weight:600;margin:-6px 0 14px}
-.pbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pbtns{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px}
 .pbtn{border:0;border-radius:16px;padding:18px 0;font:inherit;font-size:20px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 6px 16px rgba(91,140,255,.25);transition:transform .12s}
 .pbtn small{font-size:13px;font-weight:600;opacity:.85}
 .pbtn:active{transform:scale(.95)}
@@ -94,11 +94,11 @@ const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
 const key=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const parse=k=>{const[y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d)};
 const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
-const today=new Date();today.setHours(0,0,0,0);const TK=key(today);
+let today=new Date();today.setHours(0,0,0,0);let TK=key(today);
 if(!S.start){S.start=TK;save()}
 (function(){const q=new URLSearchParams(location.search);const v=parseInt((q.get("steps")||"").replace(/[^0-9]/g,""),10);
   if(!isNaN(v)){const e=S.log[TK]||{checked:[],daily:{}};e.health=v;e.healthAt=Date.now();S.log[TK]=e;save();history.replaceState(null,"",location.pathname)}})();
-const mon=addDays(today,-((today.getDay()+6)%7));
+let mon=addDays(today,-((today.getDay()+6)%7));
 let sel=(today.getDay()+6)%7,popId=null;
 function availableFor(target){
   let pool=[...CATS];const tk=key(target);let d=parse(S.start<tk?S.start:tk);
@@ -144,7 +144,7 @@ function render(){
   };
   const n=x=>x.toLocaleString("en-US");
   counter("protein","Protein","g",[20,40,80],n);
-  counter("stepsLog","Steps","steps",[4000,6000,10000],n);
+  counter("stepsLog","Steps","steps",[1000,4000,6000,10000],n);
   const h2=document.createElement("div");h2.className="section";h2.innerHTML="<span>Every day</span>";main.appendChild(h2);
   const list=document.createElement("div");list.className="list";
   DAILY.forEach(([id,label,ic])=>{const done=!!entry.daily[id],b=document.createElement("button");
@@ -158,4 +158,7 @@ function render(){
 function buzz(){try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
 document.getElementById("reset").onclick=()=>{if(confirm("Erase all workout history?")){S={start:TK,log:{}};save();render()}};
 render();
+function checkDay(){const t=new Date();t.setHours(0,0,0,0);if(key(t)!==TK){today=t;TK=key(t);mon=addDays(today,-((today.getDay()+6)%7));sel=(today.getDay()+6)%7;S=JSON.parse(localStorage.getItem(KEY)||"null")||S;render()}}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkDay()});
+window.addEventListener("pageshow",checkDay);window.addEventListener("focus",checkDay);setInterval(checkDay,60000);
 </script></body></html>
