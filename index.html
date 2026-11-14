@@ -63,6 +63,7 @@ button:disabled{opacity:.45}
 .ptotal .v{font-size:44px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,#2fd47a,#5b8cff);-webkit-background-clip:text;background-clip:text;color:transparent}
 .ptotal .u{font-size:18px;font-weight:700;color:var(--muted)}
 .ptotal .undo{margin-left:auto;background:var(--card2);border:1px solid var(--line);color:var(--muted);font:inherit;font-size:13px;font-weight:600;border-radius:12px;padding:8px 12px}
+.hsync{color:var(--muted);font-size:13px;font-weight:600;margin:-6px 0 14px}
 .pbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .pbtn{border:0;border-radius:16px;padding:18px 0;font:inherit;font-size:20px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 6px 16px rgba(91,140,255,.25);transition:transform .12s}
 .pbtn small{font-size:13px;font-weight:600;opacity:.85}
@@ -95,6 +96,8 @@ const parse=k=>{const[y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d)};
 const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
 const today=new Date();today.setHours(0,0,0,0);const TK=key(today);
 if(!S.start){S.start=TK;save()}
+(function(){const q=new URLSearchParams(location.search);const v=parseInt((q.get("steps")||"").replace(/[^0-9]/g,""),10);
+  if(!isNaN(v)){const e=S.log[TK]||{checked:[],daily:{}};e.health=v;e.healthAt=Date.now();S.log[TK]=e;save();history.replaceState(null,"",location.pathname)}})();
 const mon=addDays(today,-((today.getDay()+6)%7));
 let sel=(today.getDay()+6)%7,popId=null;
 function availableFor(target){
@@ -103,7 +106,7 @@ function availableFor(target){
   return pool;
 }
 const getEntry=k=>{const e=S.log[k]||{checked:[],daily:{}};e.checked=e.checked||[];e.daily=e.daily||{};delete e.steps;delete e.daily.steps;return e};
-const anyDone=k=>{const e=S.log[k];return e&&((e.checked||[]).length||(e.protein||[]).length||(e.stepsLog||[]).length||Object.values(e.daily||{}).some(Boolean))};
+const anyDone=k=>{const e=S.log[k];return e&&((e.checked||[]).length||(e.protein||[]).length||(e.stepsLog||[]).length||e.health||Object.values(e.daily||{}).some(Boolean))};
 function render(){
   const day=addDays(mon,sel),k=key(day),future=k>TK,entry=getEntry(k),avail=availableFor(day);
   document.getElementById("eyebrow").textContent=k===TK?"Today":future?"Upcoming":"Past";
@@ -132,8 +135,8 @@ function render(){
   const counter=(field,title,unit,amounts,fmt)=>{
     const hh=document.createElement("div");hh.className="section";hh.innerHTML="<span>"+title+"</span><span>today</span>";main.appendChild(hh);
     const pr=document.createElement("div");pr.className="protein";entry[field]=entry[field]||[];
-    const arr=entry[field],tot=arr.reduce((a,b)=>a+b,0);
-    pr.innerHTML='<div class="ptotal"><span class="v'+(popId===field?" pop":"")+'" style="display:inline-block">'+fmt(tot)+'</span><span class="u">'+unit+'</span>'+(arr.length&&!future?'<button class="undo">Undo '+fmt(arr[arr.length-1])+'</button>':'')+'</div><div class="pbtns"></div>';
+    const arr=entry[field],hs=field==="stepsLog"?(entry.health||0):0,tot=hs+arr.reduce((a,b)=>a+b,0);
+    pr.innerHTML='<div class="ptotal"><span class="v'+(popId===field?" pop":"")+'" style="display:inline-block">'+fmt(tot)+'</span><span class="u">'+unit+'</span>'+(arr.length&&!future?'<button class="undo">Undo '+fmt(arr[arr.length-1])+'</button>':'')+'</div>'+(field==="stepsLog"&&entry.healthAt?'<div class="hsync">❤️ '+n(entry.health)+' from Apple Health · synced '+new Date(entry.healthAt).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})+'</div>':'')+'<div class="pbtns"></div>';
     amounts.forEach(g=>{const b=document.createElement("button");b.className="pbtn";b.disabled=future;b.innerHTML="+"+fmt(g)+(unit==="g"?"<small>g</small>":"");
       b.onclick=()=>{arr.push(g);buzz();popId=field;S.log[k]=entry;save();render()};pr.querySelector(".pbtns").appendChild(b)});
     const u=pr.querySelector(".undo");if(u)u.onclick=()=>{arr.pop();S.log[k]=entry;save();render()};
