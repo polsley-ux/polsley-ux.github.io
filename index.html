@@ -85,7 +85,7 @@ button:disabled{opacity:.45}
 <script>
 const CATS=["back","abs","chest","shoulder","arms","legs"];
 const ICONS={back:"🧗",abs:"🔥",chest:"🏋️",shoulder:"🤾",arms:"💪",legs:"🦵"};
-const DAILY=[["abripper","Ab workout","⚡️"],["p2p","Push-up workout","🤸"]];
+const DAILY=[["p2p","Push-up workout","🤸"],["abripper","Ab workout","⚡️"]];
 const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const FULL=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const KEY="gymTracker.v1";
@@ -143,8 +143,6 @@ function render(){
     main.appendChild(pr);
   };
   const n=x=>x.toLocaleString("en-US");
-  counter("protein","Protein","g",[20,40,80],n);
-  counter("stepsLog","Steps","steps",[1000,4000,6000,10000],n);
   const h2=document.createElement("div");h2.className="section";h2.innerHTML="<span>Every day</span>";main.appendChild(h2);
   const list=document.createElement("div");list.className="list";
   DAILY.forEach(([id,label,ic])=>{const done=!!entry.daily[id],b=document.createElement("button");
@@ -152,6 +150,8 @@ function render(){
     b.innerHTML='<span class="ico">'+ic+'</span><span class="txt">'+label+'</span><span class="chk"></span>';
     b.onclick=()=>{entry.daily[id]=!done;if(!done)buzz();popId=id;S.log[k]=entry;save();render()};list.appendChild(b)});
   main.appendChild(list);
+  counter("protein","Protein","g",[20,40,80],n);
+  counter("stepsLog","Steps","steps",[1000],n);
   document.getElementById("note").textContent=future?"Upcoming days preview what's left in your rotation.":"Checked muscle groups drop off the next day until all six are done.";
   popId=null;
 }
