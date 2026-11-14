@@ -100,7 +100,25 @@ font:inherit;font-size:26px;font-weight:600;transition:transform .12s,background
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}
 .shake{animation:shake .35s ease}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
+
 .pop{animation:pop .3s ease}
+#wxmap{height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 130px);min-height:420px;border-radius:22px;overflow:hidden;border:1px solid var(--line);margin-bottom:16px;background:var(--card);touch-action:auto}
+#wxmap .leaflet-container{background:#0b0d12;font-family:inherit;height:100%;width:100%;border-radius:22px}
+.leaflet-control-attribution{background:rgba(11,13,18,.72)!important;color:var(--muted)!important;font-size:10px!important;margin:0!important}
+.leaflet-control-attribution a{color:#a8b0c3!important}
+.leaflet-bar{border:1px solid var(--line)!important;box-shadow:none!important}
+.leaflet-bar a,.leaflet-bar a:hover{background:var(--card2)!important;color:var(--text)!important;border-bottom-color:var(--line)!important;width:32px!important;height:32px!important;line-height:32px!important}
+.leaflet-bar a.leaflet-disabled{opacity:.4!important}
+.wxpin-wrap{background:transparent!important;border:0!important}
+.wxpin{width:28px;height:28px;border-radius:50%;background:var(--c,#5b8cff);box-shadow:0 0 0 4px var(--g,rgba(91,140,255,.28)),0 4px 10px rgba(0,0,0,.45);color:#fff;font:700 12px/28px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;text-align:center}
+.leaflet-popup-content-wrapper{background:var(--card)!important;color:var(--text)!important;border:1px solid var(--line)!important;border-radius:18px!important;box-shadow:0 12px 32px rgba(0,0,0,.45)!important}
+.leaflet-popup-tip{background:var(--card)!important;border:1px solid var(--line)!important;box-shadow:none!important}
+.leaflet-popup-content{margin:0!important;width:auto!important;min-width:200px}
+.leaflet-popup-close-button{color:var(--muted)!important;top:8px!important;right:8px!important}
+.wxpop-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 14px 8px}
+.wxpop-list{max-height:240px;overflow:auto;-webkit-overflow-scrolling:touch}
+.wxpop-list .row{padding:10px 14px;font-size:16px}
+.wxpop-list .avatar{width:32px;height:32px;font-size:12px}
 </style>
 </head><body>
 <div id="app"><div id="stage"></div></div>
@@ -111,6 +129,36 @@ const KEY="wx.rolodex.v1";
 const FLAGS={"Mexico":"🇲🇽","Japan":"🇯🇵","Spain":"🇪🇸","Brazil":"🇧🇷","USA":"🇺🇸","United States":"🇺🇸","United States of America":"🇺🇸","Canada":"🇨🇦","UK":"🇬🇧","United Kingdom":"🇬🇧","England":"🇬🇧","France":"🇫🇷","Germany":"🇩🇪","Italy":"🇮🇹","Portugal":"🇵🇹","Argentina":"🇦🇷","Colombia":"🇨🇴","Chile":"🇨🇱","Peru":"🇵🇪","Ecuador":"🇪🇨","Uruguay":"🇺🇾","Venezuela":"🇻🇪","Costa Rica":"🇨🇷","Panama":"🇵🇦","Guatemala":"🇬🇹","Cuba":"🇨🇺","Dominican Republic":"🇩🇴","Puerto Rico":"🇵🇷","South Korea":"🇰🇷","Korea":"🇰🇷","China":"🇨🇳","Taiwan":"🇹🇼","Hong Kong":"🇭🇰","India":"🇮🇳","Pakistan":"🇵🇰","Bangladesh":"🇧🇩","Australia":"🇦🇺","New Zealand":"🇳🇿","Thailand":"🇹🇭","Vietnam":"🇻🇳","Indonesia":"🇮🇩","Malaysia":"🇲🇾","Singapore":"🇸🇬","Philippines":"🇵🇭","Cambodia":"🇰🇭","Laos":"🇱🇦","Myanmar":"🇲🇲","Netherlands":"🇳🇱","Belgium":"🇧🇪","Switzerland":"🇨🇭","Austria":"🇦🇹","Sweden":"🇸🇪","Norway":"🇳🇴","Denmark":"🇩🇰","Finland":"🇫🇮","Ireland":"🇮🇪","Poland":"🇵🇱","Czechia":"🇨🇿","Czech Republic":"🇨🇿","Hungary":"🇭🇺","Greece":"🇬🇷","Turkey":"🇹🇷","Israel":"🇮🇱","UAE":"🇦🇪","United Arab Emirates":"🇦🇪","Saudi Arabia":"🇸🇦","Qatar":"🇶🇦","South Africa":"🇿🇦","Egypt":"🇪🇬","Morocco":"🇲🇦","Nigeria":"🇳🇬","Kenya":"🇰🇪","Ghana":"🇬🇭","Ethiopia":"🇪🇹","Tanzania":"🇹🇿","Russia":"🇷🇺","Ukraine":"🇺🇦","Romania":"🇷🇴","Croatia":"🇭🇷","Serbia":"🇷🇸","Iceland":"🇮🇸","Luxembourg":"🇱🇺","Monaco":"🇲🇨"};
 const AV=["#2a3350","#1e3a32","#3a2a4a","#3a3220","#1e3048","#3a2430","#243a38","#32283a"];
 const DEFAULT_TH={1:14,2:30,3:90};
+function normPlace(s){return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s+/g," ").trim()}
+function placeKey(city,country){return normPlace(city)+"|"+normPlace(country)}
+const COUNTRY_ALIASES={usa:["united states","united states of america","us","america"],"united states":["usa","us","united states of america"],uk:["united kingdom","england","great britain"],"united kingdom":["uk","england"],"south korea":["korea"],korea:["south korea"],czechia:["czech republic"],"czech republic":["czechia"],uae:["united arab emirates"],"united arab emirates":["uae"]};
+const CITY_COORDS=(function(){
+  const rows=[["Tijuana","Mexico",32.5149,-117.0382],["Mexico City","Mexico",19.4326,-99.1332],["Guadalajara","Mexico",20.6597,-103.3496],["Monterrey","Mexico",25.6866,-100.3161],["Cancun","Mexico",21.1619,-86.8515],["Oaxaca","Mexico",17.0732,-96.7266],["Puebla","Mexico",19.0414,-98.2063],["San Diego","USA",32.7157,-117.1611],["Los Angeles","USA",34.0522,-118.2437],["San Francisco","USA",37.7749,-122.4194],["New York","USA",40.7128,-74.006],["Chicago","USA",41.8781,-87.6298],["Miami","USA",25.7617,-80.1918],["Seattle","USA",47.6062,-122.3321],["Austin","USA",30.2672,-97.7431],["Boston","USA",42.3601,-71.0589],["Washington","USA",38.9072,-77.0369],["Portland","USA",45.5152,-122.6784],["Denver","USA",39.7392,-104.9903],["Las Vegas","USA",36.1699,-115.1398],["Phoenix","USA",33.4484,-112.074],["Houston","USA",29.7604,-95.3698],["Dallas","USA",32.7767,-96.797],["Atlanta","USA",33.749,-84.388],["Philadelphia","USA",39.9526,-75.1652],["Honolulu","USA",21.3069,-157.8583],["Tokyo","Japan",35.6762,139.6503],["Osaka","Japan",34.6937,135.5023],["Kyoto","Japan",35.0116,135.7681],["Barcelona","Spain",41.3874,2.1686],["Madrid","Spain",40.4168,-3.7038],["Valencia","Spain",39.4699,-0.3763],["Seville","Spain",37.3891,-5.9845],["Rio de Janeiro","Brazil",-22.9068,-43.1729],["Sao Paulo","Brazil",-23.5505,-46.6333],["Salvador","Brazil",-12.9777,-38.5016],["Brasilia","Brazil",-15.8267,-47.9218],["London","UK",51.5074,-0.1278],["Edinburgh","UK",55.9533,-3.1883],["Manchester","UK",53.4808,-2.2426],["Paris","France",48.8566,2.3522],["Berlin","Germany",52.52,13.405],["Munich","Germany",48.1351,11.582],["Amsterdam","Netherlands",52.3676,4.9041],["Rome","Italy",41.9028,12.4964],["Milan","Italy",45.4642,9.19],["Lisbon","Portugal",38.7223,-9.1393],["Toronto","Canada",43.6532,-79.3832],["Vancouver","Canada",49.2827,-123.1207],["Montreal","Canada",45.5017,-73.5673],["Buenos Aires","Argentina",-34.6037,-58.3816],["Bogota","Colombia",4.711,-74.0721],["Lima","Peru",-12.0464,-77.0428],["Santiago","Chile",-33.4489,-70.6693],["Seoul","South Korea",37.5665,126.978],["Beijing","China",39.9042,116.4074],["Shanghai","China",31.2304,121.4737],["Hong Kong","Hong Kong",22.3193,114.1694],["Taipei","Taiwan",25.033,121.5654],["Singapore","Singapore",1.3521,103.8198],["Bangkok","Thailand",13.7563,100.5018],["Ho Chi Minh City","Vietnam",10.8231,106.6297],["Hanoi","Vietnam",21.0278,105.8342],["Jakarta","Indonesia",-6.2088,106.8456],["Manila","Philippines",14.5995,120.9842],["Sydney","Australia",-33.8688,151.2093],["Melbourne","Australia",-37.8136,144.9631],["Auckland","New Zealand",-36.8509,174.7645],["Dubai","UAE",25.2048,55.2708],["Tel Aviv","Israel",32.0853,34.7818],["Istanbul","Turkey",41.0082,28.9784],["Cairo","Egypt",30.0444,31.2357],["Cape Town","South Africa",-33.9249,18.4241],["Johannesburg","South Africa",-26.2041,28.0473],["Lagos","Nigeria",6.5244,3.3792],["Nairobi","Kenya",-1.2921,36.8219],["Mumbai","India",19.076,72.8777],["Delhi","India",28.6139,77.209],["New Delhi","India",28.6139,77.209],["Zurich","Switzerland",47.3769,8.5417],["Vienna","Austria",48.2082,16.3738],["Prague","Czechia",50.0755,14.4378],["Budapest","Hungary",47.4979,19.0402],["Warsaw","Poland",52.2297,21.0122],["Stockholm","Sweden",59.3293,18.0686],["Copenhagen","Denmark",55.6761,12.5683],["Oslo","Norway",59.9139,10.7522],["Dublin","Ireland",53.3498,-6.2603],["Brussels","Belgium",50.8503,4.3517],["Athens","Greece",37.9838,23.7275],["West Palm Beach","USA",26.7153,-80.0534],["Tampa","USA",27.9506,-82.4572],["Sacramento","USA",38.5816,-121.4944],["Santa Cruz","USA",36.9741,-122.0308],["Kuala Lumpur","Malaysia",3.139,101.6869],["Pattaya","Thailand",12.9236,100.8825]];
+  const m={};
+  function put(city,country,lat,lng){m[placeKey(city,country)]={lat,lng}}
+  rows.forEach(([city,country,lat,lng])=>{
+    put(city,country,lat,lng);
+    (COUNTRY_ALIASES[normPlace(country)]||[]).forEach(a=>put(city,a,lat,lng));
+  });
+  return m;
+})();
+function lookupCoords(city,country){
+  if(!city)return null;
+  const k=placeKey(city,country);
+  if(CITY_COORDS[k])return CITY_COORDS[k];
+  const aliases=COUNTRY_ALIASES[normPlace(country)]||[];
+  for(const a of aliases){const c=CITY_COORDS[placeKey(city,a)];if(c)return c}
+  const ck=normPlace(city);
+  const hits=Object.keys(CITY_COORDS).filter(x=>x.split("|")[0]===ck);
+  if(hits.length===1)return CITY_COORDS[hits[0]];
+  return null;
+}
+function hasCoords(p){return p&&isFinite(+p.lat)&&isFinite(+p.lng)}
+function peerCoords(city,country,exceptId){
+  const hit=people().find(x=>x.id!==exceptId&&normPlace(x.city)===normPlace(city)&&normPlace(x.country)===normPlace(country)&&hasCoords(x));
+  return hit?{lat:+hit.lat,lng:+hit.lng}:null;
+}
+
 
 function daysAgo(n){return Date.now()-n*86400000}
 function demoPeople(){
@@ -132,7 +180,47 @@ function demoPeople(){
 function readPasscode(v){const s=v==null?"":String(v);return /^\d{4}$/.test(s)?s:null}
 function hasPasscode(){return !!readPasscode(S&&S.settings&&S.settings.passcode)}
 function defaultSettings(){return {passcode:null,thresholds:{1:14,2:30,3:90}}}
-function defaultState(){return {people:demoPeople(),settings:defaultSettings()}}
+function normalizeCountries(raw){
+  const list=[],seen=new Set();
+  const add=(name,fl)=>{
+    const n=(name||"").trim();if(!n)return;
+    const k=n.toLowerCase();if(seen.has(k))return;seen.add(k);
+    list.push({name:n,flag:(fl&&String(fl).trim())||flag(n)});
+  };
+  if(Array.isArray(raw)){
+    for(const c of raw){
+      if(typeof c==="string")add(c);
+      else if(c&&c.name)add(c.name,c.flag);
+    }
+  }
+  return list;
+}
+function countriesFromPeople(arr){
+  const names=[],seen=new Set();
+  for(const p of (arr||[])){
+    const n=(p.country||"").trim();if(!n)continue;
+    const k=n.toLowerCase();if(seen.has(k))continue;seen.add(k);names.push(n);
+  }
+  return normalizeCountries(names);
+}
+function ensureCountry(name,fl){
+  const n=(name||"").trim();if(!n)return null;
+  if(!Array.isArray(S.countries))S.countries=[];
+  const hit=S.countries.find(c=>(c.name||"").toLowerCase()===n.toLowerCase());
+  if(hit){if(fl&&String(fl).trim())hit.flag=String(fl).trim();return hit}
+  const rec={name:n,flag:(fl&&String(fl).trim())||flag(n)};
+  S.countries.push(rec);
+  S.countries.sort((a,b)=>a.name.localeCompare(b.name));
+  return rec;
+}
+function countryFlag(name){
+  const hit=(S.countries||[]).find(c=>(c.name||"").toLowerCase()===String(name||"").toLowerCase());
+  return (hit&&hit.flag)||flag(name);
+}
+function defaultState(){
+  const ppl=demoPeople();
+  return {people:ppl,countries:countriesFromPeople(ppl),settings:defaultSettings()};
+}
 function load(){
   try{
     const raw=JSON.parse(localStorage.getItem(KEY)||"null");
@@ -143,7 +231,8 @@ function load(){
       const th=raw.settings.thresholds||{};
       st.thresholds={1:+th[1]||DEFAULT_TH[1],2:+th[2]||DEFAULT_TH[2],3:+th[3]||DEFAULT_TH[3]};
     }
-    return {people:raw.people,settings:st};
+    const countries=Array.isArray(raw.countries)?normalizeCountries(raw.countries):countriesFromPeople(raw.people);
+    return {people:raw.people,countries,settings:st};
   }catch(e){return defaultState()}
 }
 let S=load();
@@ -236,10 +325,18 @@ function people(){return S.people||[]}
 function byId(id){return people().find(p=>p.id===id)}
 function countryEntries(){
   const map=new Map();
+  const bucket=name=>{
+    const n=(name||"").trim();if(!n)return null;
+    const listed=(S.countries||[]).find(c=>(c.name||"").toLowerCase()===n.toLowerCase());
+    const label=listed?listed.name:n;
+    const k=label.toLowerCase();
+    if(!map.has(k))map.set(k,{name:label,people:[],overdue:0});
+    return map.get(k);
+  };
+  for(const c of (S.countries||[]))bucket(c.name);
   for(const p of people()){
-    const c=(p.country||"").trim();if(!c)continue;
-    if(!map.has(c))map.set(c,{name:c,people:[],overdue:0});
-    const e=map.get(c);e.people.push(p);if(isOverdue(p))e.overdue++;
+    const e=bucket(p.country);if(!e)continue;
+    e.people.push(p);if(isOverdue(p))e.overdue++;
   }
   return [...map.values()].sort((a,b)=>a.name.localeCompare(b.name));
 }
@@ -255,6 +352,7 @@ function cityEntries(country){
 }
 function uniqueCountries(){
   const set=new Set(Object.keys(FLAGS));
+  for(const c of (S.countries||[]))if(c&&c.name)set.add(c.name.trim());
   for(const p of people())if(p.country)set.add(p.country.trim());
   return [...set].filter(Boolean).sort((a,b)=>a.localeCompare(b));
 }
@@ -294,13 +392,18 @@ function cur(){return nav[nav.length-1]}
 
 function go(screen){nav.push(screen);render("fwd")}
 function back(){if(nav.length>1)nav.pop();draft=null;render("back")}
-function goToPerson(p){
+function goToPerson(p,fromMap){
   p.lastViewed=Date.now();save();
-  nav=[{view:"home"},{view:"country",country:p.country},{view:"city",country:p.country,city:p.city},{view:"profile",id:p.id}];
+  if(fromMap||cur().view==="map"){
+    nav=[{view:"home"},{view:"map"},{view:"profile",id:p.id}];
+  }else{
+    nav=[{view:"home"},{view:"country",country:p.country},{view:"city",country:p.country,city:p.city},{view:"profile",id:p.id}];
+  }
   render("fwd");
 }
 
 function clearStage(){
+  destroyMap();
   const stage=document.getElementById("stage");
   if(stage)stage.innerHTML="";
 }
@@ -359,7 +462,13 @@ function headerEl(opts){
     else a.textContent=opts.actionText2||"";
     actions.appendChild(a);
   }
-  if(!opts.action&&!opts.action2&&opts.back){
+  if(opts.action3){
+    const a=h("button",{class:"navbtn",type:"button",onClick:opts.action3,"aria-label":opts.actionLabel3||"Action"});
+    if(opts.actionIcon3)a.appendChild(opts.actionIcon3);
+    else a.textContent=opts.actionText3||"";
+    actions.appendChild(a);
+  }
+  if(!opts.action&&!opts.action2&&!opts.action3&&opts.back){
     actions.appendChild(h("div",{style:{width:"40px",height:"40px"}}));
   }
   hd.appendChild(actions);
@@ -400,6 +509,7 @@ function placeRow(leading,title,count,overdue,onClick){
 }
 
 function paint(){
+  destroyMap();
   if(!unlocked){paintLock();return}
   hideLock();
   const stage=document.getElementById("stage");
@@ -411,18 +521,23 @@ function paint(){
   else if(v.view==="profile")paintProfile(stage,v.id);
   else if(v.view==="edit")paintEdit(stage);
   else if(v.view==="settings")paintSettings(stage);
+  else if(v.view==="map")paintMap(stage);
+  else if(v.view==="addcountry")paintAddCountry(stage);
   else paintHome(stage);
 }
 
 function paintHome(stage){
   stage.appendChild(headerEl({
     title:"Wx",
-    action:()=>{buzz();startEdit(null,null)},
-    actionLabel:"Add",
-    actionIcon:svgIcon("M12 5v14M5 12h14",20),
-    action2:()=>{buzz();go({view:"settings"})},
-    actionLabel2:"Settings",
-    actionIcon2:svgIcon("M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7zM19.4 13a7.7 7.7 0 0 0 .1-2l2-1.5-2-3.5-2.4 1a7.6 7.6 0 0 0-1.7-1L15 4h-4l-.4 2.5a7.6 7.6 0 0 0-1.7 1L6.5 6.5l-2 3.5 2 1.5a7.7 7.7 0 0 0 .1 2l-2 1.5 2 3.5 2.4-1a7.6 7.6 0 0 0 1.7 1L11 22h4l.4-2.5a7.6 7.6 0 0 0 1.7-1l2.4 1 2-3.5-2-1.5z",18)
+    action:()=>{buzz();go({view:"map"})},
+    actionLabel:"Map",
+    actionIcon:svgIcon("M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M3.6 9h16.8 M3.6 15h16.8 M12 3c3 3.5 3 14.5 0 18 M12 3c-3 3.5-3 14.5 0 18",20),
+    action2:()=>{buzz();startEdit(null,null)},
+    actionLabel2:"Add",
+    actionIcon2:svgIcon("M12 5v14M5 12h14",20),
+    action3:()=>{buzz();go({view:"settings"})},
+    actionLabel3:"Settings",
+    actionIcon3:svgIcon("M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7zM19.4 13a7.7 7.7 0 0 0 .1-2l2-1.5-2-3.5-2.4 1a7.6 7.6 0 0 0-1.7-1L15 4h-4l-.4 2.5a7.6 7.6 0 0 0-1.7 1L6.5 6.5l-2 3.5 2 1.5a7.7 7.7 0 0 0 .1 2l-2 1.5 2 3.5 2.4-1a7.6 7.6 0 0 0 1.7 1L11 22h4l.4-2.5a7.6 7.6 0 0 0 1.7-1l2.4 1 2-3.5-2-1.5z",18)
   }));
   const due=reachOut();
   if(due.length){
@@ -432,12 +547,18 @@ function paintHome(stage){
     stage.appendChild(list);
   }
   const cs=countryEntries();
-  stage.appendChild(h("div",{class:"section"},["Countries",h("span",{text:String(cs.length)})]));
+  const csec=h("div",{class:"section"});
+  csec.appendChild(h("span",{text:"Countries"}));
+  const cright=h("span",{style:{display:"flex",alignItems:"center",gap:"12px"}});
+  cright.appendChild(h("span",{text:String(cs.length)}));
+  cright.appendChild(h("button",{type:"button",class:"textbtn",style:{margin:"0",padding:"0",color:"var(--accent)",fontSize:"13px",fontWeight:"700",letterSpacing:".08em",textTransform:"uppercase"},onClick:()=>{buzz();go({view:"addcountry"})},text:"Add country"}));
+  csec.appendChild(cright);
+  stage.appendChild(csec);
   if(!cs.length){
-    stage.appendChild(h("div",{class:"card empty",text:"No entries yet. Tap + to add someone."}));
+    stage.appendChild(h("div",{class:"card empty",text:"No countries yet. Tap Add country, or + to add someone."}));
   }else{
     const list=h("div",{class:"list"});
-    cs.forEach(c=>list.appendChild(placeRow(flag(c.name),c.name,c.people.length,c.overdue,()=>go({view:"country",country:c.name}))));
+    cs.forEach(c=>list.appendChild(placeRow(countryFlag(c.name),c.name,c.people.length,c.overdue,()=>go({view:"country",country:c.name}))));
     stage.appendChild(list);
   }
 }
@@ -456,6 +577,13 @@ function paintCountry(stage,country){
   stage.appendChild(h("div",{class:"section"},["Cities",h("span",{text:n+" "+(n===1?"person":"people")})]));
   if(!cities.length){
     stage.appendChild(h("div",{class:"card empty",text:"No cities here yet. Tap + to add someone."}));
+    if((S.countries||[]).some(c=>(c.name||"").toLowerCase()===country.toLowerCase())&&!people().some(p=>(p.country||"").trim().toLowerCase()===country.toLowerCase())){
+      stage.appendChild(h("button",{class:"danger",type:"button",onClick:()=>{
+        if(!confirm("Remove this country?"))return;
+        S.countries=(S.countries||[]).filter(c=>(c.name||"").toLowerCase()!==country.toLowerCase());
+        save();back();
+      },text:"Remove country"}));
+    }
   }else{
     const list=h("div",{class:"list"});
     cities.forEach(c=>list.appendChild(placeRow(cityIco(),c.name,c.people.length,c.overdue,()=>go({view:"city",country,city:c.name}))));
@@ -699,17 +827,27 @@ function saveDraft(){
   if(!name||!country||!city){alert("Name, country, and city are needed.");return}
   const tier=[1,2,3].includes(+draft.tier)?+draft.tier:2;
   const fields={name,country,city,tier,description:(draft.description||"").trim(),instagram:normIg(draft.instagram),whatsapp:(draft.whatsapp||"").trim(),notes:(draft.notes||"").trim(),photo:draft.photo||null};
+  const prev=draft.id?byId(draft.id):null;
+  const locChanged=!prev||normPlace(prev.city)!==normPlace(city)||normPlace(prev.country)!==normPlace(country);
+  if(!locChanged&&hasCoords(prev)){fields.lat=+prev.lat;fields.lng=+prev.lng}
+  else{
+    const c=lookupCoords(city,country)||peerCoords(city,country,draft.id);
+    if(c){fields.lat=c.lat;fields.lng=c.lng}
+    else{fields.lat=null;fields.lng=null}
+  }
   if(draft.id){
     const p=byId(draft.id);
     if(!p)return;
-    Object.assign(p,fields);save();
+    Object.assign(p,fields);ensureCountry(country);save();
     draft=null;
+    if(!hasCoords(p))finishSaveGeocode(p);
     if(cur().view==="edit")nav.pop();
     render("back");
   }else{
     const np={id:newId(),lastContacted:null,lastViewed:null,contactLog:[],...fields};
-    S.people.push(np);save();
+    S.people.push(np);ensureCountry(country);save();
     draft=null;
+    if(!hasCoords(np))finishSaveGeocode(np);
     nav=[{view:"home"},{view:"country",country:np.country},{view:"city",country:np.country,city:np.city},{view:"profile",id:np.id}];
     render("fwd");
   }
@@ -722,6 +860,188 @@ function deletePerson(id){
   nav=nav.filter(s=>s.view!=="profile"&&s.view!=="edit"&&!(s.id&&s.id===id));
   if(!nav.length)nav=[{view:"home"}];
   render("back");
+}
+
+let mapRef=null,leafletP=null,geoQueue=Promise.resolve();
+function destroyMap(){
+  if(mapRef){try{mapRef.remove()}catch(e){}mapRef=null}
+}
+function loadLeaflet(){
+  if(window.L)return Promise.resolve();
+  if(leafletP)return leafletP;
+  leafletP=new Promise((resolve,reject)=>{
+    const css=document.createElement("link");
+    css.rel="stylesheet";
+    css.href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    css.integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=";
+    css.crossOrigin="";
+    document.head.appendChild(css);
+    const s=document.createElement("script");
+    s.src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    s.integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
+    s.crossOrigin="";
+    s.onload=()=>resolve();
+    s.onerror=()=>{leafletP=null;reject(new Error("leaflet"))};
+    document.head.appendChild(s);
+  });
+  return leafletP;
+}
+function nominatim(city,country){
+  const q=encodeURIComponent([city,country].filter(Boolean).join(", "));
+  return fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&q="+q).then(r=>r.json()).then(arr=>{
+    if(arr&&arr[0]&&isFinite(+arr[0].lat)&&isFinite(+arr[0].lon))return {lat:+arr[0].lat,lng:+arr[0].lon};
+    return null;
+  });
+}
+function enqueueNominatim(city,country){
+  return new Promise(resolve=>{
+    geoQueue=geoQueue.then(async()=>{
+      try{resolve(await nominatim(city,country))}catch(e){resolve(null)}
+      await new Promise(r=>setTimeout(r,1100));
+    });
+  });
+}
+function finishSaveGeocode(person){
+  if(!unlocked||!person||hasCoords(person))return;
+  enqueueNominatim(person.city,person.country).then(c=>{
+    if(!c||!unlocked)return;
+    const live=byId(person.id);if(!live||hasCoords(live))return;
+    live.lat=c.lat;live.lng=c.lng;save();
+    if(cur().view==="map")initMap();
+  });
+}
+function backfillCoords(){
+  if(!unlocked)return Promise.resolve();
+  let changed=false;
+  const missing=[];
+  for(const p of people()){
+    if(hasCoords(p))continue;
+    const c=lookupCoords(p.city,p.country)||peerCoords(p.city,p.country,p.id);
+    if(c){p.lat=c.lat;p.lng=c.lng;changed=true}
+    else missing.push(p);
+  }
+  if(changed)save();
+  if(!missing.length)return Promise.resolve();
+  return missing.reduce((q,p)=>q.then(()=>enqueueNominatim(p.city,p.country).then(c=>{
+    if(!c||!unlocked)return;
+    const live=byId(p.id);if(!live||hasCoords(live))return;
+    live.lat=c.lat;live.lng=c.lng;save();
+  })),Promise.resolve());
+}
+function cityClusters(){
+  const map=new Map();
+  for(const p of people()){
+    const key=placeKey(p.city,p.country)||p.id;
+    if(!map.has(key))map.set(key,{city:p.city,country:p.country,lat:null,lng:null,people:[],sev:0});
+    const g=map.get(key);
+    g.people.push(p);
+    if(hasCoords(p)){g.lat=+p.lat;g.lng=+p.lng}
+    g.sev=Math.max(g.sev,severity(p));
+  }
+  for(const g of map.values()){
+    g.people=sortPeople(g.people);
+    if(!isFinite(g.lat)||!isFinite(g.lng)){
+      const c=lookupCoords(g.city,g.country);
+      if(c){g.lat=c.lat;g.lng=c.lng}
+    }
+  }
+  return [...map.values()];
+}
+function pinIcon(count,sev){
+  const color=sev===2?"#ff6b6b":sev===1?"#f5a524":"#5b8cff";
+  const glow=sev===2?"rgba(255,107,107,.35)":sev===1?"rgba(245,165,36,.35)":"rgba(91,140,255,.32)";
+  const el=document.createElement("div");
+  el.className="wxpin";
+  el.style.setProperty("--c",color);
+  el.style.setProperty("--g",glow);
+  if(count>1)el.textContent=String(count);
+  return L.divIcon({className:"wxpin-wrap",html:el,iconSize:[28,28],iconAnchor:[14,14],popupAnchor:[0,-16]});
+}
+function popupFor(g){
+  const wrap=h("div",{class:"wxpop-inner"});
+  wrap.appendChild(h("div",{class:"wxpop-title",text:(g.city||"")+(g.country?(g.city?", ":"")+g.country:"")}));
+  const list=h("div",{class:"wxpop-list"});
+  g.people.forEach(p=>{
+    const row=h("button",{class:"row",type:"button",onClick:()=>{
+      buzz();
+      if(mapRef)try{mapRef.closePopup()}catch(e){}
+      goToPerson(p,true);
+    }});
+    row.appendChild(avatarEl(p,32));
+    const txt=h("div",{class:"txt"});
+    txt.appendChild(h("div",{class:"name",text:p.name}));
+    row.appendChild(txt);
+    row.appendChild(h("span",{class:"badge",text:"Tier "+p.tier}));
+    const sev=severity(p);
+    if(sev)row.appendChild(h("span",{class:sev===2?"odot red":"odot"}));
+    list.appendChild(row);
+  });
+  wrap.appendChild(list);
+  return wrap;
+}
+function initMap(){
+  if(!unlocked||cur().view!=="map"||!window.L)return;
+  destroyMap();
+  const el=document.getElementById("wxmap");
+  if(!el)return;
+  mapRef=L.map(el,{scrollWheelZoom:true,attributionControl:true,zoomControl:true,worldCopyJump:true});
+  // Carto dark_all now returns an "API KEY REQUIRED" placeholder (HTTP 200), so use Esri's dark gray canvas.
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",{
+    attribution:'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a> &mdash; Esri, HERE, Garmin, FAO, NOAA, USGS',
+    maxZoom:16
+  }).addTo(mapRef);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",{
+    attribution:"",
+    maxZoom:16
+  }).addTo(mapRef);
+  const bounds=[];
+  cityClusters().forEach(g=>{
+    if(!isFinite(g.lat)||!isFinite(g.lng))return;
+    const mk=L.marker([g.lat,g.lng],{icon:pinIcon(g.people.length,g.sev)});
+    mk.bindPopup(popupFor(g),{className:"wxpop",maxWidth:280,minWidth:200,autoPanPadding:[24,24]});
+    mk.addTo(mapRef);
+    bounds.push([g.lat,g.lng]);
+  });
+  if(bounds.length===1)mapRef.setView(bounds[0],6);
+  else if(bounds.length)mapRef.fitBounds(bounds,{padding:[40,40],maxZoom:6});
+  else mapRef.setView([20,0],2);
+  setTimeout(()=>{if(mapRef)mapRef.invalidateSize()},60);
+  setTimeout(()=>{if(mapRef)mapRef.invalidateSize()},300);
+}
+function paintMap(stage){
+  if(!unlocked){paintLock();return}
+  stage.appendChild(headerEl({back:true,title:"Map"}));
+  stage.appendChild(h("div",{id:"wxmap"}));
+  const note=h("p",{class:"note",id:"mapnote",text:" "});
+  stage.appendChild(note);
+  Promise.all([loadLeaflet(),backfillCoords()]).then(()=>{
+    const run=()=>{if(!unlocked||cur().view!=="map")return;initMap()};
+    setTimeout(run,180);
+  }).catch(()=>{
+    if(!unlocked||cur().view!=="map")return;
+    const n=document.getElementById("mapnote");
+    if(n)n.textContent="Couldn't load the map right now.";
+  });
+}
+
+function paintAddCountry(stage){
+  stage.appendChild(headerEl({back:true,title:"Add country"}));
+  const nameIn=h("input",{type:"text",list:"countrySuggest",autocomplete:"off",autocapitalize:"words",placeholder:"Country"});
+  const dl=h("datalist",{id:"countrySuggest"});
+  uniqueCountries().forEach(c=>dl.appendChild(h("option",{value:c})));
+  stage.appendChild(field("Country",[nameIn,dl]));
+  const flagIn=h("input",{type:"text",autocomplete:"off",placeholder:"Optional, auto-filled"});
+  nameIn.addEventListener("input",()=>{if(!flagIn.dataset.manual)flagIn.value=flag(nameIn.value.trim())});
+  flagIn.addEventListener("input",()=>{flagIn.dataset.manual="1"});
+  stage.appendChild(field("Flag",flagIn));
+  stage.appendChild(h("button",{class:"pbtn wide",type:"button",style:{marginTop:"8px"},onClick:()=>{
+    const name=nameIn.value.trim();
+    if(!name){alert("A country name is needed.");return}
+    const rec=ensureCountry(name,flagIn.value.trim());
+    save();buzz();
+    nav=[{view:"home"},{view:"country",country:rec.name}];
+    render("fwd");
+  },text:"Save"}));
 }
 
 function paintSettings(stage){
@@ -763,6 +1083,7 @@ function paintSettings(stage){
         if(!confirm("Replace all entries with this backup?"))return;
         const keep=readPasscode(S.settings.passcode);
         S.people=obj.people;
+        S.countries=Array.isArray(obj.countries)?normalizeCountries(obj.countries):countriesFromPeople(obj.people);
         if(obj.settings){
           const st=defaultSettings();
           const t=obj.settings.thresholds||{};
@@ -782,6 +1103,7 @@ function paintSettings(stage){
     if(!confirm("Replace everything with the sample entries? Your current list will be lost."))return;
     const keep=readPasscode(S.settings.passcode);
     S.people=demoPeople();
+    S.countries=countriesFromPeople(S.people);
     S.settings.thresholds={...DEFAULT_TH};
     S.settings.passcode=keep;
     save();nav=[{view:"home"}];render("back");
