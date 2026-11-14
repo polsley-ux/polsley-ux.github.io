@@ -145,7 +145,10 @@ function render(){
   const n=x=>x.toLocaleString("en-US");
   const h2=document.createElement("div");h2.className="section";h2.innerHTML="<span>Every day</span>";main.appendChild(h2);
   const list=document.createElement("div");list.className="list";
-  DAILY.forEach(([id,label,ic])=>{const done=!!entry.daily[id],b=document.createElement("button");
+  const prevD=(S.log[key(addDays(day,-1))]||{}).daily||{};
+  const shown=DAILY.filter(([id])=>entry.daily[id]||!prevD[id]);
+  if(!shown.length){const r=document.createElement("div");r.className="row";r.innerHTML='<span class="ico">😌</span><span class="txt" style="color:var(--muted)">Rest day. Both are back tomorrow.</span>';list.appendChild(r)}
+  shown.forEach(([id,label,ic])=>{const done=!!entry.daily[id],b=document.createElement("button");
     b.className="row"+(done?" done":"")+(popId===id?" pop":"");b.disabled=future;
     b.innerHTML='<span class="ico">'+ic+'</span><span class="txt">'+label+'</span><span class="chk"></span>';
     b.onclick=()=>{entry.daily[id]=!done;if(!done)buzz();popId=id;S.log[k]=entry;save();render()};list.appendChild(b)});
