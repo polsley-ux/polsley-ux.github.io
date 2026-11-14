@@ -21,6 +21,9 @@ header{display:flex;align-items:center;justify-content:space-between;margin:12px
 .eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin:2px 0 0}
 .date{color:var(--muted);font-size:15px;margin-top:2px}
+.hsteps{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;font-weight:600;margin-top:4px}
+.sbtn{border:1px solid var(--line);background:var(--card2);color:var(--text);font:inherit;font-size:11px;font-weight:700;border-radius:8px;padding:3px 7px}
+.sbtn:active{transform:scale(.92);background:var(--line)}
 .ring{position:relative;width:64px;height:64px;flex:none}
 .ring svg{transform:rotate(-90deg)}
 .ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:17px}
@@ -73,7 +76,7 @@ button:disabled{opacity:.45}
 .pop{animation:pop .3s ease}
 </style></head><body>
 <header>
-  <div><div class="eyebrow" id="eyebrow"></div><h1 id="title"></h1><div class="date" id="date"></div></div>
+  <div><div class="eyebrow" id="eyebrow"></div><h1 id="title"></h1><div class="date" id="date"></div><div class="hsteps" id="hsteps"></div></div>
   <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="27" stroke="#232a3c" stroke-width="6" fill="none"/>
   <circle id="arc" cx="32" cy="32" r="27" stroke="url(#g)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="169.6" style="transition:stroke-dashoffset .5s"/>
   <defs><linearGradient id="g"><stop offset="0" stop-color="#2fd47a"/><stop offset="1" stop-color="#5b8cff"/></linearGradient></defs></svg>
@@ -159,7 +162,9 @@ function render(){
     b.onclick=()=>{entry.daily[id]=!done;if(!done)buzz();popId=id;S.log[k]=entry;save();render()};list.appendChild(b)});
   main.appendChild(list);
   counter("protein","Protein","g",[20,40,80],n);
-  counter("stepsLog","Steps","steps",[1000],n);
+  {const sl=entry.stepsLog=entry.stepsLog||[];const tot=(entry.health||0)+sl.reduce((a,b)=>a+b,0);const hs=document.getElementById("hsteps");
+   hs.innerHTML='<span>'+n(tot)+' steps</span>'+(future?'':'<button class="sbtn">+1000</button>');
+   const sb=hs.querySelector(".sbtn");if(sb)sb.onclick=()=>{sl.push(1000);buzz();S.log[k]=entry;save();render()};}
   document.getElementById("note").textContent=future?"Upcoming days preview what's left in your rotation.":"Checked muscle groups drop off the next day until all six are done.";
   popId=null;
 }
