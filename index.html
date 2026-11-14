@@ -24,6 +24,7 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin:2px 0 0}
 .daterow{display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
 .daterow .date{margin-top:0;white-space:nowrap}
 .hsteps{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:600;white-space:nowrap}
+.snum{font-size:22px;font-weight:800;letter-spacing:-.01em}
 .sbtn{border:1px solid var(--line);background:var(--card2);color:var(--text);font:inherit;font-size:11px;font-weight:700;border-radius:8px;padding:3px 7px}
 .sbtn:active{transform:scale(.92);background:var(--line)}
 .ring{position:relative;width:64px;height:64px;flex:none}
@@ -94,7 +95,7 @@ const ICONS={back:"🧗",abs:"🔥",chest:"🏋️",shoulder:"🤾",arms:"💪",
 const DAILY=[["p2p","Push-up workout","🤸"],["abripper","Ab workout","⚡️"]];
 // Video links: paste a URL between the quotes to make the name tappable.
 const VIDEOS={p2p:"https://youtu.be/kIaqbrWBexY?is=3kjq4RLl9R-e3zPS",abripper:"https://vimeo.com/1110400985"};
-function openVideo(u){const c=u.replace(/^https:\/\//,"googlechromes://").replace(/^http:\/\//,"googlechrome://");const t=Date.now();location.href=c;setTimeout(()=>{if(Date.now()-t<2000&&!document.hidden)window.open(u,"_blank")},1200)}
+function openVideo(u){location.href=u.replace(/^https:\/\//,"googlechromes://").replace(/^http:\/\//,"googlechrome://")}
 const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const FULL=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const KEY="gymTracker.v1";
@@ -165,7 +166,7 @@ function render(){
   main.appendChild(list);
   counter("protein","Protein","g",[20,40,80],n);
   {const sl=entry.stepsLog=entry.stepsLog||[];const tot=(entry.health||0)+sl.reduce((a,b)=>a+b,0);const hs=document.getElementById("hsteps");
-   hs.innerHTML='<span>'+n(tot)+' steps</span>'+(future?'':'<button class="sbtn">+1000</button>');
+   hs.innerHTML='<span class="snum" style="color:'+(tot>=8000?'#2fd47a':'#ff5a5f')+'">'+n(tot)+'</span><span>steps</span>'+(future?'':'<button class="sbtn">+1000</button>');
    const sb=hs.querySelector(".sbtn");if(sb)sb.onclick=()=>{sl.push(1000);buzz();S.log[k]=entry;save();render()};}
   document.getElementById("note").textContent=future?"Upcoming days preview what's left in your rotation.":"Checked muscle groups drop off the next day until all six are done.";
   popId=null;
