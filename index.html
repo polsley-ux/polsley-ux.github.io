@@ -101,7 +101,7 @@ if(!S.start){S.start=TK;save()}
 let mon=addDays(today,-((today.getDay()+6)%7));
 let sel=(today.getDay()+6)%7,popId=null;
 function availableFor(target){
-  let pool=[...CATS];const tk=key(target);let d=parse(S.start<tk?S.start:tk);
+  let pool=[...CATS];const tk=key(target);const st=[S.start,...Object.keys(S.log)].filter(Boolean).sort()[0]||tk;let d=parse(st<tk?st:tk);
   while(key(d)<tk){const c=(S.log[key(d)]||{}).checked||[];pool=pool.filter(x=>!c.includes(x));if(!pool.length)pool=[...CATS];d=addDays(d,1)}
   return pool;
 }
