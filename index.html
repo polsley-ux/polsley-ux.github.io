@@ -161,7 +161,7 @@ function render(){
   if(!shown.length){const r=document.createElement("div");r.className="row";r.innerHTML='<span class="ico">😌</span><span class="txt" style="color:var(--muted)">Rest day. Both are back tomorrow.</span>';list.appendChild(r)}
   shown.forEach(([id,label,ic])=>{const done=!!entry.daily[id],b=document.createElement("div");b.setAttribute("role","button");
     b.className="row"+(done?" done":"")+(popId===id?" pop":"")+(future?" off":"");
-    b.innerHTML='<span class="ico">'+ic+'</span><span class="txt">'+(VIDEOS[id]?'<a class="vlink" href="'+chromeUrl(VIDEOS[id])+'">'+label+' ▶︎</a>':label)+'</span><span class="chk"></span>';
+    b.innerHTML='<span class="ico">'+ic+'</span><span class="txt">'+(VIDEOS[id]?'<a class="vlink" href="'+VIDEOS[id]+'" target="_blank" rel="noopener">'+label+' ▶︎</a>':label)+'</span><span class="chk"></span>';
     const vl=b.querySelector(".vlink");if(vl)vl.onclick=ev=>ev.stopPropagation();
     b.onclick=()=>{if(future)return;entry.daily[id]=!done;if(!done)buzz();popId=id;S.log[k]=entry;save();render()};list.appendChild(b)});
   main.appendChild(list);
