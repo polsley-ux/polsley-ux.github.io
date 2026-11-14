@@ -53,6 +53,7 @@ padding:18px 16px;min-height:112px;text-align:left;display:flex;flex-direction:c
 .row .chk{width:30px;height:30px;border-radius:50%;border:2px solid #39415a;display:flex;align-items:center;justify-content:center;transition:all .25s;flex:none}
 .row.done .chk{background:var(--done);border-color:var(--done)}
 .row.done .txt{color:var(--muted)}
+.vlink{text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
 button:disabled{opacity:.45}
 .banner{border-radius:22px;padding:22px;text-align:center;background:linear-gradient(135deg,rgba(47,212,122,.18),rgba(91,140,255,.18));border:1px solid #2a4f48;margin-bottom:26px}
 .banner .big{font-size:34px}.banner p{margin:8px 0 0;color:#cfe;font-weight:600}
@@ -86,6 +87,9 @@ button:disabled{opacity:.45}
 const CATS=["back","abs","chest","shoulder","arms","legs"];
 const ICONS={back:"🧗",abs:"🔥",chest:"🏋️",shoulder:"🤾",arms:"💪",legs:"🦵"};
 const DAILY=[["p2p","Push-up workout","🤸"],["abripper","Ab workout","⚡️"]];
+// Video links: paste a URL between the quotes to make the name tappable.
+const VIDEOS={p2p:"https://youtu.be/kIaqbrWBexY?is=3kjq4RLl9R-e3zPS",abripper:"https://vimeo.com/1110400985"};
+function openVideo(u){const c=u.replace(/^https:\/\//,"googlechromes://").replace(/^http:\/\//,"googlechrome://");const t=Date.now();location.href=c;setTimeout(()=>{if(Date.now()-t<2000&&!document.hidden)window.open(u,"_blank")},1200)}
 const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const FULL=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const KEY="gymTracker.v1";
@@ -150,7 +154,8 @@ function render(){
   if(!shown.length){const r=document.createElement("div");r.className="row";r.innerHTML='<span class="ico">😌</span><span class="txt" style="color:var(--muted)">Rest day. Both are back tomorrow.</span>';list.appendChild(r)}
   shown.forEach(([id,label,ic])=>{const done=!!entry.daily[id],b=document.createElement("button");
     b.className="row"+(done?" done":"")+(popId===id?" pop":"");b.disabled=future;
-    b.innerHTML='<span class="ico">'+ic+'</span><span class="txt">'+label+'</span><span class="chk"></span>';
+    b.innerHTML='<span class="ico">'+ic+'</span><span class="txt">'+(VIDEOS[id]?'<span class="vlink">'+label+' ▶︎</span>':label)+'</span><span class="chk"></span>';
+    const vl=b.querySelector(".vlink");if(vl)vl.onclick=ev=>{ev.stopPropagation();openVideo(VIDEOS[id])};
     b.onclick=()=>{entry.daily[id]=!done;if(!done)buzz();popId=id;S.log[k]=entry;save();render()};list.appendChild(b)});
   main.appendChild(list);
   counter("protein","Protein","g",[20,40,80],n);
