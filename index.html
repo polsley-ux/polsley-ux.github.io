@@ -120,7 +120,7 @@ function render(){
   DAYS.forEach((n,i)=>{const dd=addDays(mon,i),dk=key(dd),b=document.createElement("button");
     b.className="tab"+(i===sel?" sel":"")+(dk===TK?" today":"")+(dk>TK?" future":"");
     b.innerHTML=n+"<b>"+dd.getDate()+"</b>"+(anyDone(dk)&&i!==sel?'<span class="dot"></span>':"");
-    b.onclick=()=>{sel=i;render()};tabs.appendChild(b)});
+    b.onclick=()=>{sel=i;if(!checkDay())render()};tabs.appendChild(b)});
   const main=document.getElementById("main");main.innerHTML="";
   const left=avail.filter(c=>!entry.checked.includes(c));
   const h=document.createElement("div");h.className="section";h.innerHTML="<span>Muscle groups</span><span>"+left.length+" left</span>";main.appendChild(h);
@@ -158,7 +158,7 @@ function render(){
 function buzz(){try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
 document.getElementById("reset").onclick=()=>{if(confirm("Erase all workout history?")){S={start:TK,log:{}};save();render()}};
 render();
-function checkDay(){const t=new Date();t.setHours(0,0,0,0);if(key(t)!==TK){today=t;TK=key(t);mon=addDays(today,-((today.getDay()+6)%7));sel=(today.getDay()+6)%7;S=JSON.parse(localStorage.getItem(KEY)||"null")||S;render()}}
+function checkDay(){const t=new Date();t.setHours(0,0,0,0);if(key(t)!==TK){today=t;TK=key(t);mon=addDays(today,-((today.getDay()+6)%7));sel=(today.getDay()+6)%7;S=JSON.parse(localStorage.getItem(KEY)||"null")||S;render();return true}return false}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkDay()});
 window.addEventListener("pageshow",checkDay);window.addEventListener("focus",checkDay);setInterval(checkDay,60000);
 </script></body></html>
