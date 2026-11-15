@@ -159,6 +159,25 @@ font:inherit;font-size:26px;font-weight:600;transition:transform .12s,background
 .chk{display:flex;align-items:center;gap:10px;margin:14px 2px 2px;color:var(--text);font-size:15px;font-weight:600;letter-spacing:0;text-transform:none}
 .chk input{width:18px;height:18px;accent-color:var(--accent);flex:none}
 .memchip{border:0;font:inherit;cursor:pointer}
+.stchip{font-size:10px;font-weight:700;letter-spacing:.03em;border-radius:7px;padding:2px 6px;flex:none;white-space:nowrap;border:0}
+.stchip.new{color:var(--accent);background:rgba(91,140,255,.16)}
+.stchip.talking{color:#c4b0ff;background:rgba(143,107,255,.18)}
+.stchip.dating{color:var(--done);background:rgba(47,212,122,.16)}
+.stchip.paused{color:var(--warn);background:rgba(245,165,36,.16)}
+.stchip.done{color:var(--muted);background:rgba(139,147,167,.18)}
+.stchip.on{box-shadow:inset 0 0 0 1px currentColor}
+.trip{border:1px solid var(--line);border-radius:22px;background:var(--card);padding:16px 16px 8px;margin:0 0 18px}
+.trip-top{display:flex;align-items:center;gap:8px;margin:0 0 10px}
+.trip-top h2{margin:0;flex:1;min-width:0;font-size:20px;font-weight:800;letter-spacing:-.02em}
+.trip-offer .trip-top h2{font-size:17px}
+.trow{display:flex;align-items:center;gap:8px;padding:8px 0}
+.trow+.trow{border-top:1px solid var(--line)}
+.tmain{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:0;background:transparent;color:var(--text);font:inherit;text-align:left;padding:0}
+.tmain .txt{flex:1;min-width:0}
+.tmain .name{font-size:16px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tmain .sub{color:var(--muted);font-size:12px;font-weight:600;margin-top:2px}
+.tacts{display:flex;gap:6px;flex:none}
+.tacts .pbtn{padding:8px 10px;font-size:13px;border-radius:12px}
 
 
 input[type=date]{color-scheme:dark;min-height:48px}
@@ -216,6 +235,8 @@ const AV=["#2a3350","#1e3a32","#3a2a4a","#3a3220","#1e3048","#3a2430","#243a38",
 const DEFAULT_TH={1:14,2:30,3:90};
 const DEFAULT_EVENTS=["Dinner","Drinks","Coffee","Club","Date night","Gym","Beach","Work","Flight","Free"];
 const MET_VIA=["In person","Tinder","Bumble","Instagram","Other"];
+const STATUSES=["New","Talking","Dating","Paused","Done"];
+const STATUS_DEFAULT="Talking";
 const UPDATE_TYPES=[{id:"firstMeet",label:"First meet (cold approach)"},{id:"date",label:"Date"},{id:"text",label:"Text"},{id:"call",label:"Call"},{id:"other",label:"Other"}];
 const UPDATE_TYPE_IDS=UPDATE_TYPES.map(t=>t.id);
 const UPDATE_TYPE_LABEL={firstMeet:"First meet",date:"Date",text:"Text",call:"Call",other:"Other"};
@@ -281,7 +302,7 @@ function demoPeople(){
 }
 function readPasscode(v){const s=v==null?"":String(v);return /^\d{4}$/.test(s)?s:null}
 function hasPasscode(){return !!readPasscode(S&&S.settings&&S.settings.passcode)}
-function defaultSettings(){return {passcode:null,thresholds:{1:14,2:30,3:90},lastCity:"",lastCountry:""}}
+function defaultSettings(){return {passcode:null,thresholds:{1:14,2:30,3:90},lastCity:"",lastCountry:"",homeCity:"Tijuana",homeCountry:"Mexico"}}
 function normalizeCountries(raw){
   const list=[],seen=new Set();
   const add=(name,fl)=>{
@@ -321,7 +342,7 @@ function countryFlag(name){
 }
 function defaultState(){
   const ppl=demoPeople();
-  return {people:ppl,countries:countriesFromPeople(ppl),settings:defaultSettings(),plans:{},events:DEFAULT_EVENTS.slice(),confidence:[],memories:[]};
+  return {people:normalizePeople(ppl),countries:countriesFromPeople(ppl),settings:defaultSettings(),plans:{},events:DEFAULT_EVENTS.slice(),confidence:[],memories:[],trip:null};
 }
 function applyMediaMeta(rec,item){
   const video=item&&(item.kind==="video"||(item.type&&String(item.type).indexOf("video/")===0));
@@ -413,8 +434,35 @@ function normalizeUpdates(raw){
 }
 function normalizePeople(arr){
   if(!Array.isArray(arr))return [];
-  for(const p of arr){if(p&&typeof p==="object")p.updates=normalizeUpdates(p.updates)}
+  for(const p of arr){
+    if(p&&typeof p==="object"){
+      p.updates=normalizeUpdates(p.updates);
+      p.status=STATUSES.includes(p.status)?p.status:STATUS_DEFAULT;
+    }
+  }
   return arr;
+}
+function personStatus(p){return p&&STATUSES.includes(p.status)?p.status:STATUS_DEFAULT}
+function statusQuiet(p){const s=personStatus(p);return s==="Paused"||s==="Done"}
+function statusChipEl(s,extra){
+  const cls="stchip "+String(s||"").toLowerCase()+(extra&&extra.on?" on":"")+(extra&&extra.btn?" stbtn":"");
+  const el=h(extra&&extra.btn?"button":"span",{type:extra&&extra.btn?"button":undefined,class:cls,text:s});
+  if(extra&&extra.onClick)el.addEventListener("click",extra.onClick);
+  return el;
+}
+function normalizeTrip(raw){
+  if(!raw||typeof raw!=="object")return null;
+  const city=(raw.city||"").trim(),country=(raw.country||"").trim();
+  if(!city)return null;
+  return {city,country};
+}
+function homePlace(){
+  const st=S.settings||{};
+  return {city:(st.homeCity||"Tijuana").trim()||"Tijuana",country:(st.homeCountry||"Mexico").trim()||"Mexico"};
+}
+function setPersonStatus(p,s){
+  if(!p||!STATUSES.includes(s))return;
+  p.status=s;save();
 }
 function updateCountsAsContact(u){return !!(u&&CONTACT_UPDATE_TYPES.includes(u.type))}
 function applyContactFromUpdates(p){
@@ -494,15 +542,19 @@ function load(){
       st.thresholds={1:+th[1]||DEFAULT_TH[1],2:+th[2]||DEFAULT_TH[2],3:+th[3]||DEFAULT_TH[3]};
       st.lastCity=raw.settings.lastCity?String(raw.settings.lastCity):"";
       st.lastCountry=raw.settings.lastCountry?String(raw.settings.lastCountry):"";
+      st.homeCity=(raw.settings.homeCity&&String(raw.settings.homeCity).trim())||"Tijuana";
+      st.homeCountry=(raw.settings.homeCountry&&String(raw.settings.homeCountry).trim())||"Mexico";
     }
     const countries=Array.isArray(raw.countries)?normalizeCountries(raw.countries):countriesFromPeople(raw.people);
-    return {people:normalizePeople(raw.people),countries,settings:st,plans:normalizePlans(raw.plans),events:normalizeEvents(raw.events!=null?raw.events:DEFAULT_EVENTS),confidence:normalizeConfidence(raw.confidence),memories:normalizeMemories(raw.memories)};
+    return {people:normalizePeople(raw.people),countries,settings:st,plans:normalizePlans(raw.plans),events:normalizeEvents(raw.events!=null?raw.events:DEFAULT_EVENTS),confidence:normalizeConfidence(raw.confidence),memories:normalizeMemories(raw.memories),trip:normalizeTrip(raw.trip)};
   }catch(e){return defaultState()}
 }
 let S=load();
 if(!S.plans)S.plans={};if(!Array.isArray(S.events))S.events=DEFAULT_EVENTS.slice();
 if(!Array.isArray(S.confidence))S.confidence=[];
 if(!Array.isArray(S.memories))S.memories=[];
+if(S.trip===undefined)S.trip=null;
+S.trip=normalizeTrip(S.trip);
 const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
 function eventList(){if(!Array.isArray(S.events))S.events=DEFAULT_EVENTS.slice();return S.events}
 function planDay(k){if(!S.plans)S.plans={};return S.plans[k]||{}}
@@ -517,7 +569,7 @@ function setSlot(k,slot,data){
   else S.plans[k]=day;
   save();
 }
-let planToday=startOfDay(new Date()),planTK=dateKey(planToday),planMon=mondayOf(planToday),planSel=(planToday.getDay()+6)%7,viaFilter="",pickDraft=null;
+let planToday=startOfDay(new Date()),planTK=dateKey(planToday),planMon=mondayOf(planToday),planSel=(planToday.getDay()+6)%7,viaFilter="",statusFilter="",showDone=false,pickDraft=null,tripQ="",tripOffer=null,tripOfferChecked=false,tripOfferDismissed=false;
 function syncPlannerToday(){
   const t=startOfDay(new Date()),k=dateKey(t);
   if(k===planTK)return false;
@@ -585,7 +637,7 @@ function avatarEl(p,size){
 }
 function daysSince(ts){if(!ts)return Infinity;return (Date.now()-ts)/86400000}
 function threshold(tier){const t=S.settings.thresholds||DEFAULT_TH;return +t[tier]||DEFAULT_TH[tier]||30}
-function isOverdue(p){return daysSince(p.lastContacted)>threshold(p.tier)}
+function isOverdue(p){if(statusQuiet(p))return false;return daysSince(p.lastContacted)>threshold(p.tier)}
 function severity(p){
   if(!isOverdue(p))return 0;
   if(!p.lastContacted||daysSince(p.lastContacted)>threshold(p.tier)*2)return 2;
@@ -775,6 +827,7 @@ function personRow(p,sub){
   txt.appendChild(h("div",{class:"name",text:p.name}));
   txt.appendChild(h("div",{class:"sub",text:(p.lastContacted?ago(p.lastContacted):"Never")+(sub?" · "+sub:"")}));
   row.appendChild(txt);
+  row.appendChild(statusChipEl(personStatus(p)));
   const oc=latestOutcome(p);
   if(oc)row.appendChild(h("span",{class:"opill "+oc,text:OUTCOME_LABEL[oc]||oc}));
   if(p.metVia)row.appendChild(h("span",{class:"via",text:p.metVia}));
@@ -824,6 +877,7 @@ function paint(){
   else if(v.view==="memories")paintMemories(stage,v.personId||null);
   else if(v.view==="update")paintUpdate(stage,v.id);
   else if(v.view==="quickadd")paintQuickAdd(stage);
+  else if(v.view==="tripick")paintTripPick(stage);
   else paintHome(stage);
 }
 
@@ -1583,6 +1637,155 @@ function deleteMemory(id){
   if(at>=0){memRevealed=false;openMemView(Math.min(at,left.length-1))}
 }
 
+
+function haversineKm(a,b){
+  const R=6371,toR=x=>x*Math.PI/180;
+  const dLat=toR(b.lat-a.lat),dLng=toR(b.lng-a.lng);
+  const s=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return 2*R*Math.asin(Math.min(1,Math.sqrt(s)));
+}
+function citiesWithPeople(){
+  const map=new Map();
+  for(const p of people()){
+    const city=(p.city||"").trim(),country=(p.country||"").trim();
+    if(!city)continue;
+    const k=placeKey(city,country);
+    if(!map.has(k)){
+      const c=hasCoords(p)?{lat:+p.lat,lng:+p.lng}:lookupCoords(city,country)||peerCoords(city,country);
+      map.set(k,{city,country,lat:c&&isFinite(+c.lat)?+c.lat:null,lng:c&&isFinite(+c.lng)?+c.lng:null,n:0});
+    }
+    const e=map.get(k);e.n++;
+    if((!isFinite(+e.lat)||!isFinite(+e.lng))&&hasCoords(p)){e.lat=+p.lat;e.lng=+p.lng}
+  }
+  return [...map.values()].sort((a,b)=>a.city.localeCompare(b.city)||a.country.localeCompare(b.country));
+}
+function nearestCityTo(lat,lng,maxKm){
+  maxKm=maxKm==null?80:maxKm;
+  let best=null,bestD=Infinity;
+  for(const c of citiesWithPeople()){
+    if(!isFinite(+c.lat)||!isFinite(+c.lng))continue;
+    const d=haversineKm({lat,lng},{lat:+c.lat,lng:+c.lng});
+    if(d<=maxKm&&d<bestD){best=c;bestD=d}
+  }
+  return best?Object.assign({km:bestD},best):null;
+}
+function startTrip(city,country){
+  S.trip=normalizeTrip({city,country});
+  tripOffer=null;tripOfferDismissed=true;
+  save();
+  nav=[{view:"home"}];
+  render("back");
+}
+function endTrip(){
+  S.trip=null;save();buzz();
+  if(cur().view==="home")paint();
+  else{nav=[{view:"home"}];render("back")}
+}
+function peopleInPlace(city,country){
+  return people().filter(p=>normPlace(p.city)===normPlace(city)&&(!country||normPlace(p.country)===normPlace(country)));
+}
+function travelPersonRow(p){
+  const row=h("div",{class:"trow"});
+  const main=h("button",{class:"tmain",type:"button",onClick:()=>{buzz();goToPerson(p)}});
+  main.appendChild(avatarEl(p,40));
+  const txt=h("div",{class:"txt"});
+  txt.appendChild(h("div",{class:"name",text:p.name}));
+  txt.appendChild(h("div",{class:"sub",text:(p.lastContacted?ago(p.lastContacted):"Never")+" · Tier "+p.tier}));
+  main.appendChild(txt);
+  main.appendChild(statusChipEl(personStatus(p)));
+  row.appendChild(main);
+  const acts=h("div",{class:"tacts"});
+  const ig=normIg(p.instagram),wa=waDigits(p.whatsapp);
+  if(ig)acts.appendChild(h("button",{class:"pbtn",type:"button",text:"IG",onClick:()=>{
+    recordContact(p,"instagram");buzz();
+    window.open("https://instagram.com/"+encodeURIComponent(ig),"_blank","noopener");
+    paint();
+  }}));
+  if(wa)acts.appendChild(h("button",{class:"pbtn",type:"button",text:"WA",onClick:()=>{
+    recordContact(p,"whatsapp");buzz();
+    window.open("https://wa.me/"+wa,"_blank","noopener");
+    paint();
+  }}));
+  if(ig||wa)row.appendChild(acts);
+  return row;
+}
+function travelBanner(){
+  const trip=S.trip;if(!trip||!trip.city)return h("div");
+  const box=h("div",{class:"trip"});
+  const top=h("div",{class:"trip-top"});
+  top.appendChild(h("h2",{text:"✈️ I'm in "+trip.city}));
+  top.appendChild(h("button",{type:"button",class:"textbtn",style:{margin:"0",padding:"4px 0",color:"var(--accent)"},text:"Change",onClick:()=>{buzz();go({view:"tripick"})}}));
+  top.appendChild(h("button",{type:"button",class:"pbtn",style:{padding:"8px 12px",fontSize:"13px",margin:"0"},text:"End trip",onClick:endTrip}));
+  box.appendChild(top);
+  if(trip.country)box.appendChild(h("div",{class:"sub",style:{color:"var(--muted)",fontSize:"13px",fontWeight:"600",margin:"-4px 0 10px"},text:trip.country}));
+  const list=sortPeople(peopleInPlace(trip.city,trip.country));
+  if(!list.length)box.appendChild(h("div",{class:"empty",style:{padding:"12px 0"},text:"No one in your list is in this city."}));
+  else list.forEach(p=>box.appendChild(travelPersonRow(p)));
+  return box;
+}
+function tripOfferBanner(){
+  const o=tripOffer;if(!o||!o.city)return h("div");
+  const box=h("div",{class:"trip trip-offer"});
+  const top=h("div",{class:"trip-top"});
+  top.appendChild(h("h2",{text:"Looks like you're in "+o.city}));
+  box.appendChild(top);
+  const btns=h("div",{class:"pbtns",style:{marginBottom:"8px"}});
+  btns.appendChild(h("button",{class:"pbtn",type:"button",text:"I'm in "+o.city,onClick:()=>{buzz();startTrip(o.city,o.country)}}));
+  btns.appendChild(h("button",{class:"pbtn",type:"button",text:"Not now",onClick:()=>{tripOffer=null;tripOfferDismissed=true;buzz();paint()}}));
+  box.appendChild(btns);
+  return box;
+}
+function maybeOfferTrip(){
+  if(!unlocked||tripOfferChecked||tripOfferDismissed||(S.trip&&S.trip.city))return;
+  if(!navigator.geolocation){tripOfferChecked=true;return}
+  const run=()=>{
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const hit=nearestCityTo(pos.coords.latitude,pos.coords.longitude,80);
+      if(!hit)return;
+      const home=homePlace();
+      if(placeKey(hit.city,hit.country)===placeKey(home.city,home.country))return;
+      tripOffer={city:hit.city,country:hit.country};
+      if(unlocked&&cur().view==="home")paint();
+    },()=>{},{maximumAge:300000,timeout:8000,enableHighAccuracy:false});
+  };
+  tripOfferChecked=true;
+  try{
+    if(navigator.permissions&&navigator.permissions.query){
+      navigator.permissions.query({name:"geolocation"}).then(p=>{
+        if(p.state==="granted")run();
+      }).catch(()=>{});
+    }
+  }catch(e){}
+}
+function useTripLocation(){
+  if(!navigator.geolocation){alert("Location isn't available on this device.");return}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const hit=nearestCityTo(pos.coords.latitude,pos.coords.longitude,80);
+    if(!hit){alert("No one in your list is within about 80 km.");return}
+    startTrip(hit.city,hit.country);
+  },()=>alert("Couldn't get your location."),{timeout:12000,maximumAge:60000,enableHighAccuracy:false});
+}
+function paintTripPick(stage){
+  stage.appendChild(headerEl({back:true,title:"I'm in…"}));
+  stage.appendChild(h("button",{class:"pbtn wide",type:"button",style:{marginTop:"0"},text:"Use my location",onClick:()=>{buzz();useTripLocation()}}));
+  const q=h("input",{type:"search",placeholder:"Search cities",value:tripQ||"",autocomplete:"off"});
+  q.addEventListener("input",()=>{tripQ=q.value;paint()});
+  stage.appendChild(h("div",{class:"field",style:{marginTop:"16px"}},[q]));
+  const needle=normPlace(tripQ);
+  const cities=citiesWithPeople().filter(c=>!needle||normPlace(c.city).includes(needle)||normPlace(c.country).includes(needle));
+  if(!cities.length){
+    stage.appendChild(h("div",{class:"card empty",text:"No matching cities in your list."}));
+    return;
+  }
+  const list=h("div",{class:"list"});
+  cities.forEach(c=>{
+    const active=S.trip&&placeKey(S.trip.city,S.trip.country)===placeKey(c.city,c.country);
+    list.appendChild(placeRow(cityIco(),c.city+(c.country?", "+c.country:""),c.n,0,()=>startTrip(c.city,c.country)));
+    if(active)list.lastChild.appendChild(h("span",{class:"via",text:"Now"}));
+  });
+  stage.appendChild(list);
+}
+
 function paintHome(stage){
   stage.appendChild(headerEl({
     title:"Wx",
@@ -1596,7 +1799,20 @@ function paintHome(stage){
     actionLabel3:"Settings",
     actionIcon3:svgIcon("M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7zM19.4 13a7.7 7.7 0 0 0 .1-2l2-1.5-2-3.5-2.4 1a7.6 7.6 0 0 0-1.7-1L15 4h-4l-.4 2.5a7.6 7.6 0 0 0-1.7 1L6.5 6.5l-2 3.5 2 1.5a7.7 7.7 0 0 0 .1 2l-2 1.5 2 3.5 2.4-1a7.6 7.6 0 0 0 1.7 1L11 22h4l.4-2.5a7.6 7.6 0 0 0 1.7-1l2.4 1 2-3.5-2-1.5z",18)
   }));
+  maybeOfferTrip();
+  if(S.trip&&S.trip.city)stage.appendChild(travelBanner());
+  else if(tripOffer&&tripOffer.city)stage.appendChild(tripOfferBanner());
   stage.appendChild(paintPlanner());
+  if(!(S.trip&&S.trip.city)){
+    const tripBtn=h("button",{type:"button",class:"conf-home",onClick:()=>{buzz();go({view:"tripick"})}});
+    tripBtn.appendChild(h("div",{class:"ico",text:"✈️"}));
+    const ttxt=h("div",{class:"txt"});
+    ttxt.appendChild(h("div",{text:"I'm in…"}));
+    ttxt.appendChild(h("div",{class:"sub",text:"Travel mode for a city you're visiting"}));
+    tripBtn.appendChild(ttxt);
+    tripBtn.appendChild(h("span",{class:"chev",text:"›"}));
+    stage.appendChild(tripBtn);
+  }
   const qaBtn=h("button",{type:"button",class:"conf-home",onClick:()=>{buzz();startQuickAdd()}});
   qaBtn.appendChild(h("div",{class:"ico",text:"＋"}));
   const qtxt=h("div",{class:"txt"});
@@ -1693,7 +1909,21 @@ function paintCity(stage,country,city){
     chips.appendChild(h("button",{type:"button",class:"chip"+(viaFilter===v?" on":""),text:v||"All",onClick:()=>{viaFilter=v;buzz();paint()}}));
   });
   stage.appendChild(chips);
-  const filtered=viaFilter?listPeople.filter(p=>p.metVia===viaFilter):listPeople;
+  const stChips=h("div",{class:"chips"});
+  stChips.appendChild(h("button",{type:"button",class:"chip"+(!statusFilter?" on":""),text:"All",onClick:()=>{statusFilter="";buzz();paint()}}));
+  STATUSES.filter(s=>s!=="Done").forEach(s=>{
+    stChips.appendChild(h("button",{type:"button",class:"chip stchip "+s.toLowerCase()+(statusFilter===s?" on":""),text:s,onClick:()=>{statusFilter=statusFilter===s?"":s;buzz();paint()}}));
+  });
+  stChips.appendChild(h("button",{type:"button",class:"chip"+(showDone||statusFilter==="Done"?" on":""),text:"Show Done",onClick:()=>{
+    showDone=!showDone;
+    if(!showDone&&statusFilter==="Done")statusFilter="";
+    if(showDone&&statusFilter==="Done"){}
+    buzz();paint();
+  }}));
+  stage.appendChild(stChips);
+  let filtered=viaFilter?listPeople.filter(p=>p.metVia===viaFilter):listPeople.slice();
+  if(statusFilter)filtered=filtered.filter(p=>personStatus(p)===statusFilter);
+  else if(!showDone)filtered=filtered.filter(p=>personStatus(p)!=="Done");
   if(!listPeople.length){
     stage.appendChild(h("div",{class:"card empty",text:"No one in this city yet. Tap + to add someone."}));
     return;
@@ -1742,8 +1972,13 @@ function paintProfile(stage,id){
     heroWrap,
     h("h2",{class:"pname",text:p.name}),
     h("div",{class:"ploc",text:flag(p.country)+"  "+[p.city,p.country].filter(Boolean).join(", ")}),
-    h("div",{style:{marginBottom:"16px",display:"flex",gap:"8px",justifyContent:"center",flexWrap:"wrap"}},[h("span",{class:"badge",text:"Tier "+p.tier}),p.metVia?h("span",{class:"via",text:p.metVia}):null,memoriesFor(p.id).length?h("button",{type:"button",class:"via memchip",text:"Memories "+memoriesFor(p.id).length,onClick:()=>{buzz();go({view:"memories",personId:p.id})}}):null])
+    h("div",{style:{marginBottom:"10px",display:"flex",gap:"8px",justifyContent:"center",flexWrap:"wrap"}},[h("span",{class:"badge",text:"Tier "+p.tier}),p.metVia?h("span",{class:"via",text:p.metVia}):null,memoriesFor(p.id).length?h("button",{type:"button",class:"via memchip",text:"Memories "+memoriesFor(p.id).length,onClick:()=>{buzz();go({view:"memories",personId:p.id})}}):null])
   ]);
+  const stRow=h("div",{class:"chips",style:{justifyContent:"center",marginBottom:"16px"}});
+  STATUSES.forEach(s=>{
+    stRow.appendChild(statusChipEl(s,{btn:true,on:personStatus(p)===s,onClick:e=>{e.stopPropagation();setPersonStatus(p,s);buzz();paint()}}));
+  });
+  prof.appendChild(stRow);
   if(p.description)prof.appendChild(h("p",{class:"pdesc",text:p.description}));
   stage.appendChild(prof);
 
@@ -1953,7 +2188,7 @@ function saveQuickAdd(){
     name,country,city,tier:2,description:"",
     instagram:normIg(qaDraft.instagram),
     whatsapp:(qaDraft.whatsapp||"").trim(),
-    notes:"",photo:qaDraft.photo||null,metVia:"In person",updates:[upd]
+    notes:"",photo:qaDraft.photo||null,metVia:"In person",status:"New",updates:[upd]
   };
   const c=lookupCoords(city,country)||peerCoords(city,country,null);
   if(c){fields.lat=c.lat;fields.lng=c.lng}else{fields.lat=null;fields.lng=null}
@@ -2070,10 +2305,10 @@ function startEdit(p,pre){
   draft=p?{
     id:p.id,name:p.name||"",country:p.country||"",city:p.city||"",tier:+p.tier||2,
     description:p.description||"",instagram:p.instagram||"",whatsapp:p.whatsapp||"",
-    notes:p.notes||"",photo:p.photo||null,metVia:p.metVia||""
+    notes:p.notes||"",photo:p.photo||null,metVia:p.metVia||"",status:personStatus(p)
   }:{
     id:null,name:"",country:(pre&&pre.country)||"",city:(pre&&pre.city)||"",tier:2,
-    description:"",instagram:"",whatsapp:"",notes:"",photo:null,metVia:""
+    description:"",instagram:"",whatsapp:"",notes:"",photo:null,metVia:"",status:STATUS_DEFAULT
   };
   go({view:"edit",id:draft.id});
 }
@@ -2086,7 +2321,7 @@ function bind(el,key,extra){
 }
 
 function paintEdit(stage){
-  if(!draft)draft={id:null,name:"",country:"",city:"",tier:2,description:"",instagram:"",whatsapp:"",notes:"",photo:null,metVia:""};
+  if(!draft)draft={id:null,name:"",country:"",city:"",tier:2,description:"",instagram:"",whatsapp:"",notes:"",photo:null,metVia:"",status:STATUS_DEFAULT};
   const isNew=!draft.id;
   stage.appendChild(headerEl({back:true,title:isNew?"New":"Edit"}));
 
@@ -2147,6 +2382,15 @@ function paintEdit(stage){
   });
   stage.appendChild(field("Tier",seg));
 
+  const stWrap=h("div",{class:"chips",style:{marginBottom:"0"}});
+  STATUSES.forEach(s=>{
+    stWrap.appendChild(statusChipEl(s,{btn:true,on:personStatus(draft)===s,onClick:()=>{
+      draft.status=s;buzz();
+      [...stWrap.querySelectorAll(".stchip")].forEach(el=>el.classList.toggle("on",el.textContent===draft.status));
+    }}));
+  });
+  stage.appendChild(field("Status",stWrap));
+
   const viaWrap=h("div",{class:"chips",style:{marginBottom:"0"}});
   [{v:"",l:"None"},...MET_VIA.map(v=>({v,l:v}))].forEach(({v,l})=>{
     viaWrap.appendChild(h("button",{type:"button",class:"chip"+(draft.metVia===v?" on":""),text:l,onClick:()=>{
@@ -2202,7 +2446,7 @@ function saveDraft(){
   const city=(draft.city||"").trim();
   if(!name||!country||!city){alert("Name, country, and city are needed.");return}
   const tier=[1,2,3].includes(+draft.tier)?+draft.tier:2;
-  const fields={name,country,city,tier,description:(draft.description||"").trim(),instagram:normIg(draft.instagram),whatsapp:(draft.whatsapp||"").trim(),notes:(draft.notes||"").trim(),photo:draft.photo||null,metVia:MET_VIA.includes(draft.metVia)?draft.metVia:""};
+  const fields={name,country,city,tier,description:(draft.description||"").trim(),instagram:normIg(draft.instagram),whatsapp:(draft.whatsapp||"").trim(),notes:(draft.notes||"").trim(),photo:draft.photo||null,metVia:MET_VIA.includes(draft.metVia)?draft.metVia:"",status:STATUSES.includes(draft.status)?draft.status:STATUS_DEFAULT};
   const prev=draft.id?byId(draft.id):null;
   const locChanged=!prev||normPlace(prev.city)!==normPlace(city)||normPlace(prev.country)!==normPlace(country);
   if(!locChanged&&hasCoords(prev)){fields.lat=+prev.lat;fields.lng=+prev.lng}
@@ -2429,6 +2673,22 @@ function paintSettings(stage){
   pass.appendChild(h("button",{class:"pbtn wide",type:"button",style:{marginTop:"0"},onClick:()=>beginPin("change-old"),text:"Change passcode"}));
   stage.appendChild(pass);
 
+  stage.appendChild(h("div",{class:"section",text:"Home city"}));
+  const home=h("div",{class:"card"});
+  const homeCity=h("input",{type:"text",value:homePlace().city,autocomplete:"off",autocapitalize:"words"});
+  homeCity.addEventListener("change",()=>{
+    S.settings.homeCity=(homeCity.value||"").trim()||"Tijuana";
+    homeCity.value=S.settings.homeCity;save();
+  });
+  const homeCountry=h("input",{type:"text",value:homePlace().country,autocomplete:"off",autocapitalize:"words"});
+  homeCountry.addEventListener("change",()=>{
+    S.settings.homeCountry=(homeCountry.value||"").trim()||"Mexico";
+    homeCountry.value=S.settings.homeCountry;save();
+  });
+  home.appendChild(field("City",homeCity));
+  home.appendChild(field("Country",homeCountry));
+  stage.appendChild(home);
+
   stage.appendChild(h("div",{class:"section",text:"Reach-out window"}));
   const th=h("div",{class:"card"});
   [1,2,3].forEach(tier=>{
@@ -2493,12 +2753,17 @@ function paintSettings(stage){
           const st=defaultSettings();
           const t=obj.settings.thresholds||{};
           st.thresholds={1:+t[1]||DEFAULT_TH[1],2:+t[2]||DEFAULT_TH[2],3:+t[3]||DEFAULT_TH[3]};
+          st.lastCity=obj.settings.lastCity?String(obj.settings.lastCity):"";
+          st.lastCountry=obj.settings.lastCountry?String(obj.settings.lastCountry):"";
+          st.homeCity=(obj.settings.homeCity&&String(obj.settings.homeCity).trim())||"Tijuana";
+          st.homeCountry=(obj.settings.homeCountry&&String(obj.settings.homeCountry).trim())||"Mexico";
           S.settings=st;
         }
         S.settings.passcode=keep;
         S.plans=normalizePlans(obj.plans);
         S.events=obj.events!=null?normalizeEvents(obj.events):DEFAULT_EVENTS.slice();
         S.confidence=normalizeConfidence(obj.confidence);
+        S.trip=normalizeTrip(obj.trip);
         const hasMem=Array.isArray(obj.memories);
         if(hasMem)S.memories=normalizeMemories(obj.memories);
         save();
@@ -2527,7 +2792,8 @@ function paintSettings(stage){
     S.countries=countriesFromPeople(S.people);
     S.settings.thresholds={...DEFAULT_TH};
     S.settings.passcode=keep;
-    S.plans={};S.events=DEFAULT_EVENTS.slice();S.confidence=[];S.memories=[];
+    S.settings.homeCity="Tijuana";S.settings.homeCountry="Mexico";
+    S.plans={};S.events=DEFAULT_EVENTS.slice();S.confidence=[];S.memories=[];S.trip=null;
     save();
     Promise.all([idbClear(),idbClear(IDB_MEM)]).catch(()=>{}).finally(()=>{nav=[{view:"home"}];render("back")});
     return;
