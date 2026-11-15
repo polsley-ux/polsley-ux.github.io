@@ -70,7 +70,7 @@ display:flex;align-items:center;justify-content:center;padding:0;transition:tran
 .log li span{color:var(--muted);font-weight:600;flex:none}
 .field{margin-bottom:16px}
 label{display:block;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 4px}
-input[type=text],input[type=number],input[type=tel],input[type=password],textarea,select{
+input[type=text],input[type=number],input[type=tel],input[type=password],input[type=date],textarea,select{
 width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;color:var(--text);font:inherit;font-size:16px;padding:14px 16px;outline:none;-webkit-appearance:none;appearance:none}
 textarea{min-height:88px;resize:vertical;line-height:1.4}
 input:focus,textarea:focus{border-color:#39415a}
@@ -130,7 +130,61 @@ font:inherit;font-size:26px;font-weight:600;transition:transform .12s,background
 .evrow{display:flex;align-items:center;gap:10px;padding:8px 0}
 .evrow+.evrow{border-top:1px solid var(--line)}
 .evrow span{flex:1;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis}
+
 .week-range{color:var(--muted);font-size:12px;font-weight:600;text-align:center;margin:-4px 0 10px}
+.conf-home{width:100%;display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--text);font:inherit;font-size:18px;font-weight:700;padding:16px 16px;margin:0 0 18px;text-align:left;transition:transform .12s,background .12s}
+.conf-home:active{transform:scale(.99);background:var(--card2)}
+.conf-home .ico{width:38px;height:38px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.conf-home .txt{flex:1;min-width:0}
+.conf-home .sub{color:var(--muted);font-size:13px;font-weight:600;margin-top:2px}
+.conf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:26px}
+.conf-thumb{aspect-ratio:1;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);padding:0;position:relative}
+.conf-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.conf-thumb:active{transform:scale(.98)}
+#confview,#memview{display:none;position:fixed;inset:0;z-index:40;background:#0b0d12;flex-direction:column;padding:calc(env(safe-area-inset-top) + 8px) 0 calc(env(safe-area-inset-bottom) + 12px)}
+#confview.on,#memview.on{display:flex}
+#confview .cv-top,#memview .cv-top{display:flex;align-items:center;gap:8px;padding:0 14px 8px}
+#confview .cv-top .titles,#memview .cv-top .titles{flex:1;text-align:center;min-width:0}
+#confview .cv-top h2,#memview .cv-top h2{margin:0;font-size:17px;font-weight:800}
+#confview .cv-stage,#memview .cv-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;touch-action:pan-y;user-select:none;position:relative;overflow:hidden}
+#confview .cv-stage img,#memview .cv-stage img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+#confview .cv-cap,#memview .cv-cap{margin:10px 16px 0;width:auto}
+.conf-thumb img.mem-blur{filter:blur(18px);transform:scale(1.28);transform-origin:center}
+#memview .cv-stage img.mem-blur{filter:blur(32px);transform:scale(1.18);max-width:120%;max-height:120%}
+#memview .cv-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(11,13,18,.62);border:1px solid var(--line);color:var(--text);font-size:14px;font-weight:700;border-radius:999px;padding:10px 14px;pointer-events:none;z-index:2}
+#memview .cv-link{margin:8px 16px 0;width:auto;display:flex;align-items:center;gap:8px}
+#memview .cv-pick{margin:8px 16px 0;max-height:180px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px}
+#memview .cv-pick .row{padding:10px 12px;font-size:16px}
+.chk{display:flex;align-items:center;gap:10px;margin:14px 2px 2px;color:var(--text);font-size:15px;font-weight:600;letter-spacing:0;text-transform:none}
+.chk input{width:18px;height:18px;accent-color:var(--accent);flex:none}
+.memchip{border:0;font:inherit;cursor:pointer}
+
+
+input[type=date]{color-scheme:dark;min-height:48px}
+.opill{font-size:10px;font-weight:700;letter-spacing:.03em;border-radius:7px;padding:2px 6px;flex:none;white-space:nowrap}
+.opill.great{color:var(--done);background:rgba(47,212,122,.16)}
+.opill.okay{color:var(--warn);background:rgba(245,165,36,.16)}
+.opill.bad{color:var(--bad);background:rgba(255,107,107,.16)}
+.opill.on.great{border-color:rgba(47,212,122,.45);color:var(--done)}
+.opill.on.okay{border-color:rgba(245,165,36,.45);color:var(--warn)}
+.opill.on.bad{border-color:rgba(255,107,107,.45);color:var(--bad)}
+.upd{display:block;width:100%;border:0;background:transparent;color:var(--text);font:inherit;text-align:left;padding:14px 0;margin:0;border-radius:0;transition:background .12s}
+.upd+.upd{border-top:1px solid var(--line)}
+.upd:active{background:var(--card2)}
+.upd .when{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.upd .when b{font-size:15px;font-weight:700}
+.upd .where{color:var(--muted);font-size:13px;font-weight:600;margin-top:2px}
+.upd .body{font-size:15px;font-weight:500;line-height:1.45;white-space:pre-wrap;margin-top:6px}
+.apcard{padding:16px 18px 8px;margin-bottom:18px}
+.apcard .section{margin:0 0 8px}
+.aprow{display:flex;align-items:center;gap:12px;padding:10px 0}
+.aprow+.aprow{border-top:1px solid var(--line)}
+.aprow .txt{flex:1;min-width:0}
+.aprow .name{font-size:16px;font-weight:700}
+.aprow .sub{color:var(--muted);font-size:13px;font-weight:600;margin-top:2px}
+.apstat{text-align:right;flex:none}
+.apstat b{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.apstat span{display:block;color:var(--muted);font-size:12px;font-weight:600;margin-top:2px}
 
 #wxmap{height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 130px);min-height:420px;border-radius:22px;overflow:hidden;border:1px solid var(--line);margin-bottom:16px;background:var(--card);touch-action:auto}
 #wxmap .leaflet-container{background:#0b0d12;font-family:inherit;height:100%;width:100%;border-radius:22px}
@@ -161,6 +215,13 @@ const AV=["#2a3350","#1e3a32","#3a2a4a","#3a3220","#1e3048","#3a2430","#243a38",
 const DEFAULT_TH={1:14,2:30,3:90};
 const DEFAULT_EVENTS=["Dinner","Drinks","Coffee","Club","Date night","Gym","Beach","Work","Flight","Free"];
 const MET_VIA=["In person","Tinder","Bumble","Instagram","Other"];
+const UPDATE_TYPES=[{id:"firstMeet",label:"First meet (cold approach)"},{id:"date",label:"Date"},{id:"text",label:"Text"},{id:"call",label:"Call"},{id:"other",label:"Other"}];
+const UPDATE_TYPE_IDS=UPDATE_TYPES.map(t=>t.id);
+const UPDATE_TYPE_LABEL={firstMeet:"First meet",date:"Date",text:"Text",call:"Call",other:"Other"};
+const CONTACT_UPDATE_TYPES=["firstMeet","date","text","call"];
+const OUTCOMES=[{id:"great",label:"Went great"},{id:"okay",label:"Okay"},{id:"bad",label:"Didn't go well"}];
+const OUTCOME_LABEL={great:"Went great",okay:"Okay",bad:"Didn't go well"};
+
 const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const SLOTS=["afternoon","evening"];
 const SLOT_LABEL={afternoon:"Afternoon",evening:"Evening"};
@@ -204,13 +265,13 @@ function daysAgo(n){return Date.now()-n*86400000}
 function demoPeople(){
   const P=(o)=>({lastViewed:null,contactLog:[],photo:null,...o});
   return [
-    P({id:"d1",name:"Maya Herrera",country:"Mexico",city:"Tijuana",tier:1,description:"Met at a weekend market near the border.",instagram:"example.maya",whatsapp:"15265550101",notes:"Lives near the river. Likes early coffee.",lastContacted:daysAgo(3),lastViewed:daysAgo(1),contactLog:[{at:daysAgo(3),type:"whatsapp"},{at:daysAgo(18),type:"manual"}]}),
+    P({id:"d1",name:"Maya Herrera",country:"Mexico",city:"Tijuana",tier:1,description:"Met at a weekend market near the border.",instagram:"example.maya",whatsapp:"15265550101",notes:"Lives near the river. Likes early coffee.",lastContacted:daysAgo(3),lastViewed:daysAgo(1),contactLog:[{at:daysAgo(3),type:"whatsapp"},{at:daysAgo(18),type:"manual"}],updates:[{id:"du1",date:dateKey(addDays(startOfDay(new Date()),-2)),type:"firstMeet",text:"",where:"Weekend market near the border",outcome:"great"}]}),
     P({id:"d2",name:"Luis Ortega",country:"Mexico",city:"Tijuana",tier:2,description:"Introduced through Maya at a taco stand.",instagram:"example.luis",whatsapp:"15265550102",notes:"Works late most weeknights.",lastContacted:daysAgo(45),contactLog:[{at:daysAgo(45),type:"instagram"}]}),
     P({id:"d3",name:"Sofia Ramirez",country:"Mexico",city:"Mexico City",tier:1,description:"Sat next to each other on a long bus ride.",instagram:"example.sofia",whatsapp:"15265550103",notes:"Coyoacán area. Mentioned a Saturday flea market.",lastContacted:null}),
-    P({id:"d4",name:"Kenji Watanabe",country:"Japan",city:"Tokyo",tier:1,description:"Met at a record shop in Shimokitazawa.",instagram:"example.kenji",whatsapp:"81355550104",notes:"Into jazz pressings. Usually free on Sundays.",lastContacted:daysAgo(20),contactLog:[{at:daysAgo(20),type:"instagram"},{at:daysAgo(40),type:"whatsapp"}]}),
+    P({id:"d4",name:"Kenji Watanabe",country:"Japan",city:"Tokyo",tier:1,description:"Met at a record shop in Shimokitazawa.",instagram:"example.kenji",whatsapp:"81355550104",notes:"Into jazz pressings. Usually free on Sundays.",lastContacted:daysAgo(20),contactLog:[{at:daysAgo(20),type:"instagram"},{at:daysAgo(40),type:"whatsapp"}],updates:[{id:"du4",date:dateKey(new Date(new Date().getFullYear(),new Date().getMonth(),1)),type:"firstMeet",text:"",where:"Record shop",outcome:"okay"}]}),
     P({id:"d5",name:"Aiko Tanaka",country:"Japan",city:"Tokyo",tier:3,description:"Friend of Kenji's from a language exchange.",instagram:"example.aiko",whatsapp:"81355550105",notes:"Prefers messages over calls.",lastContacted:daysAgo(10),contactLog:[{at:daysAgo(10),type:"whatsapp"}]}),
     P({id:"d6",name:"Marta Varela",country:"Spain",city:"Barcelona",tier:2,description:"Met during a walking tour in Gràcia.",instagram:"example.marta",whatsapp:"34655550106",notes:"Knows good neighborhood bakeries.",lastContacted:daysAgo(8),contactLog:[{at:daysAgo(8),type:"manual"}]}),
-    P({id:"d7",name:"Jordi Puig",country:"Spain",city:"Barcelona",tier:3,description:"Ran into at a neighborhood cafe.",instagram:"example.jordi",whatsapp:"34655550107",notes:"Travels often in the spring.",lastContacted:daysAgo(120),contactLog:[{at:daysAgo(120),type:"instagram"}]}),
+    P({id:"d7",name:"Jordi Puig",country:"Spain",city:"Barcelona",tier:3,description:"Ran into at a neighborhood cafe.",instagram:"example.jordi",whatsapp:"34655550107",notes:"Travels often in the spring.",lastContacted:daysAgo(120),contactLog:[{at:daysAgo(120),type:"instagram"}],updates:[{id:"du7",date:dateKey(new Date(new Date().getFullYear(),new Date().getMonth()-1,2)),type:"firstMeet",text:"",where:"Neighborhood cafe",outcome:"bad"}]}),
     P({id:"d8",name:"Rafael Costa",country:"Brazil",city:"Rio de Janeiro",tier:1,description:"Met after a morning hike at Pedra Bonita.",instagram:"example.rafael",whatsapp:"552155550108",notes:"Early riser. Good local trail tips.",lastContacted:daysAgo(2),lastViewed:daysAgo(2),contactLog:[{at:daysAgo(2),type:"whatsapp"}]}),
     P({id:"d9",name:"Camila Souza",country:"Brazil",city:"Rio de Janeiro",tier:2,description:"Rafael's cousin, met at a family lunch.",instagram:"example.camila",whatsapp:"552155550109",notes:"Works near Ipanema.",lastContacted:null}),
     P({id:"d10",name:"Jordan Blake",country:"USA",city:"San Diego",tier:1,description:"Met at a Saturday farmers market in Little Italy.",instagram:"example.jordan",whatsapp:"16195550110",notes:"Usually around on weekends.",lastContacted:daysAgo(16),contactLog:[{at:daysAgo(16),type:"manual"},{at:daysAgo(35),type:"instagram"}]}),
@@ -219,7 +280,7 @@ function demoPeople(){
 }
 function readPasscode(v){const s=v==null?"":String(v);return /^\d{4}$/.test(s)?s:null}
 function hasPasscode(){return !!readPasscode(S&&S.settings&&S.settings.passcode)}
-function defaultSettings(){return {passcode:null,thresholds:{1:14,2:30,3:90}}}
+function defaultSettings(){return {passcode:null,thresholds:{1:14,2:30,3:90},lastCity:"",lastCountry:""}}
 function normalizeCountries(raw){
   const list=[],seen=new Set();
   const add=(name,fl)=>{
@@ -259,7 +320,31 @@ function countryFlag(name){
 }
 function defaultState(){
   const ppl=demoPeople();
-  return {people:ppl,countries:countriesFromPeople(ppl),settings:defaultSettings(),plans:{},events:DEFAULT_EVENTS.slice()};
+  return {people:ppl,countries:countriesFromPeople(ppl),settings:defaultSettings(),plans:{},events:DEFAULT_EVENTS.slice(),confidence:[],memories:[]};
+}
+function normalizeMemories(raw){
+  if(!Array.isArray(raw))return [];
+  const out=[];
+  for(const item of raw){
+    if(!item||typeof item!=="object")continue;
+    const id=item.id?String(item.id):"";
+    if(!id)continue;
+    const rec={id,caption:item.caption?String(item.caption):"",added:+item.added||0};
+    if(item.personId)rec.personId=String(item.personId);
+    out.push(rec);
+  }
+  return out;
+}
+function normalizeConfidence(raw){
+  if(!Array.isArray(raw))return [];
+  const out=[];
+  for(const item of raw){
+    if(!item||typeof item!=="object")continue;
+    const id=item.id?String(item.id):"";
+    if(!id)continue;
+    out.push({id,caption:item.caption?String(item.caption):"",added:+item.added||0});
+  }
+  return out;
 }
 function normalizeEvents(raw){
   if(!Array.isArray(raw))return DEFAULT_EVENTS.slice();
@@ -285,6 +370,107 @@ function normalizePlans(raw){
   }
   return out;
 }
+
+function newUpdId(){return "u"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function updateTs(u){
+  if(!u||!u.date)return 0;
+  const d=parseDate(u.date);
+  if(!d||isNaN(+d))return 0;
+  d.setHours(12,0,0,0);
+  const t=d.getTime();
+  return t>Date.now()?Date.now():t;
+}
+function normalizeUpdate(u){
+  if(!u||typeof u!=="object")return null;
+  let date=String(u.date||"").trim();
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+    if(u.date&&isFinite(+u.date))date=dateKey(new Date(+u.date));
+    else if(u.at&&isFinite(+u.at))date=dateKey(new Date(+u.at));
+    else date=dateKey(new Date());
+  }
+  const type=UPDATE_TYPE_IDS.includes(u.type)?u.type:"";
+  const outcome=(type==="firstMeet"&&["great","okay","bad"].includes(u.outcome))?u.outcome:"";
+  return {id:u.id?String(u.id):newUpdId(),date,type,text:u.text?String(u.text):"",where:type==="firstMeet"&&u.where?String(u.where):"",outcome};
+}
+function normalizeUpdates(raw){
+  if(!Array.isArray(raw))return [];
+  const out=[];
+  for(const u of raw){const n=normalizeUpdate(u);if(n)out.push(n)}
+  out.sort((a,b)=>updateTs(b)-updateTs(a)||String(b.id).localeCompare(String(a.id)));
+  return out;
+}
+function normalizePeople(arr){
+  if(!Array.isArray(arr))return [];
+  for(const p of arr){if(p&&typeof p==="object")p.updates=normalizeUpdates(p.updates)}
+  return arr;
+}
+function updateCountsAsContact(u){return !!(u&&CONTACT_UPDATE_TYPES.includes(u.type))}
+function applyContactFromUpdates(p){
+  let max=0;
+  for(const item of (p.contactLog||[])){const t=+item.at||0;if(t>max)max=t}
+  for(const u of (p.updates||[])){if(!updateCountsAsContact(u))continue;const t=updateTs(u);if(t>max)max=t}
+  p.lastContacted=max||null;
+}
+function latestOutcome(p){
+  const ups=(p.updates||[]).slice().sort((a,b)=>updateTs(b)-updateTs(a));
+  const hit=ups.find(u=>u.type==="firstMeet"&&u.outcome);
+  return hit?hit.outcome:"";
+}
+function fmtDateKey(k){
+  const d=parseDate(k);
+  if(!d||isNaN(+d))return k||"";
+  return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+}
+function rememberPlace(city,country){
+  if(!S.settings)S.settings=defaultSettings();
+  if(city)S.settings.lastCity=city;
+  if(country)S.settings.lastCountry=country;
+}
+function countryForCity(city){
+  const c=(city||"").trim().toLowerCase();if(!c)return "";
+  const found=[],seen=new Set();
+  for(const p of people()){
+    if((p.city||"").trim().toLowerCase()!==c)continue;
+    const co=(p.country||"").trim();const k=co.toLowerCase();
+    if(!k||seen.has(k))continue;seen.add(k);found.push(co);
+  }
+  return found.length===1?found[0]:"";
+}
+function approachStats(){
+  const now=startOfDay(new Date());
+  const mon=mondayOf(now),weekEnd=addDays(mon,7);
+  const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+  const monthEnd=new Date(now.getFullYear(),now.getMonth()+1,1);
+  let week=0,weekGreat=0,month=0,monthGreat=0;
+  for(const p of people()){
+    for(const u of (p.updates||[])){
+      if(u.type!=="firstMeet")continue;
+      const d=startOfDay(parseDate(u.date));
+      if(!d||isNaN(+d))continue;
+      if(d>=mon&&d<weekEnd){week++;if(u.outcome==="great")weekGreat++}
+      if(d>=monthStart&&d<monthEnd){month++;if(u.outcome==="great")monthGreat++}
+    }
+  }
+  return {week,weekGreat,weekPct:week?Math.round(100*weekGreat/week):null,month,monthGreat,monthPct:month?Math.round(100*monthGreat/month):null};
+}
+function approachesCard(){
+  const s=approachStats();
+  const card=h("div",{class:"card apcard"});
+  card.appendChild(h("div",{class:"section",style:{margin:"0 0 4px"},text:"Approaches"}));
+  const mk=(label,n,pct)=>{
+    const row=h("div",{class:"aprow"});
+    row.appendChild(h("div",{class:"txt"},[h("div",{class:"name",text:label}),h("div",{class:"sub",text:n===1?"1 approach":n+" approaches"})]));
+    const st=h("div",{class:"apstat"});
+    st.appendChild(h("b",{text:String(n)}));
+    st.appendChild(h("span",{text:pct==null?"No rating yet":pct+"% went great"}));
+    row.appendChild(st);
+    return row;
+  };
+  card.appendChild(mk("This week",s.week,s.weekPct));
+  card.appendChild(mk("This month",s.month,s.monthPct));
+  return card;
+}
+
 function load(){
   try{
     const raw=JSON.parse(localStorage.getItem(KEY)||"null");
@@ -294,13 +480,17 @@ function load(){
       st.passcode=readPasscode(raw.settings.passcode);
       const th=raw.settings.thresholds||{};
       st.thresholds={1:+th[1]||DEFAULT_TH[1],2:+th[2]||DEFAULT_TH[2],3:+th[3]||DEFAULT_TH[3]};
+      st.lastCity=raw.settings.lastCity?String(raw.settings.lastCity):"";
+      st.lastCountry=raw.settings.lastCountry?String(raw.settings.lastCountry):"";
     }
     const countries=Array.isArray(raw.countries)?normalizeCountries(raw.countries):countriesFromPeople(raw.people);
-    return {people:raw.people,countries,settings:st,plans:normalizePlans(raw.plans),events:normalizeEvents(raw.events!=null?raw.events:DEFAULT_EVENTS)};
+    return {people:normalizePeople(raw.people),countries,settings:st,plans:normalizePlans(raw.plans),events:normalizeEvents(raw.events!=null?raw.events:DEFAULT_EVENTS),confidence:normalizeConfidence(raw.confidence),memories:normalizeMemories(raw.memories)};
   }catch(e){return defaultState()}
 }
 let S=load();
 if(!S.plans)S.plans={};if(!Array.isArray(S.events))S.events=DEFAULT_EVENTS.slice();
+if(!Array.isArray(S.confidence))S.confidence=[];
+if(!Array.isArray(S.memories))S.memories=[];
 const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
 function eventList(){if(!Array.isArray(S.events))S.events=DEFAULT_EVENTS.slice();return S.events}
 function planDay(k){if(!S.plans)S.plans={};return S.plans[k]||{}}
@@ -468,6 +658,8 @@ function contactTypeLabel(t){return t==="instagram"?"Instagram":t==="whatsapp"?"
 let nav=[{view:"home"}];
 let unlocked=false;
 let draft=null;
+let updDraft=null;
+let qaDraft=null;
 let pinBuf="";
 let pinPending=null;
 let pinPurpose="unlock";
@@ -476,7 +668,7 @@ let animating=false;
 function cur(){return nav[nav.length-1]}
 
 function go(screen){nav.push(screen);render("fwd")}
-function back(){if(cur().view==="planpick"){savePlanPick();return}if(nav.length>1)nav.pop();draft=null;render("back")}
+function back(){if(cur().view==="planpick"){savePlanPick();return}if(nav.length>1)nav.pop();draft=null;updDraft=null;qaDraft=null;render("back")}
 function goToPerson(p,fromMap){
   p.lastViewed=Date.now();save();
   if(fromMap||cur().view==="map"){
@@ -489,6 +681,9 @@ function goToPerson(p,fromMap){
 
 function clearStage(){
   destroyMap();
+  closeConfView();
+  closeMemView();
+  revokeConfUrls();
   const stage=document.getElementById("stage");
   if(stage)stage.innerHTML="";
 }
@@ -568,6 +763,8 @@ function personRow(p,sub){
   txt.appendChild(h("div",{class:"name",text:p.name}));
   txt.appendChild(h("div",{class:"sub",text:(p.lastContacted?ago(p.lastContacted):"Never")+(sub?" · "+sub:"")}));
   row.appendChild(txt);
+  const oc=latestOutcome(p);
+  if(oc)row.appendChild(h("span",{class:"opill "+oc,text:OUTCOME_LABEL[oc]||oc}));
   if(p.metVia)row.appendChild(h("span",{class:"via",text:p.metVia}));
   row.appendChild(h("span",{class:"badge",text:"Tier "+p.tier}));
   if(sev)row.appendChild(h("span",{class:sev===2?"odot red":"odot"}));
@@ -611,6 +808,10 @@ function paint(){
   else if(v.view==="map")paintMap(stage);
   else if(v.view==="addcountry")paintAddCountry(stage);
   else if(v.view==="planpick")paintPlanPick(stage);
+  else if(v.view==="confidence")paintConfidence(stage);
+  else if(v.view==="memories")paintMemories(stage,v.personId||null);
+  else if(v.view==="update")paintUpdate(stage,v.id);
+  else if(v.view==="quickadd")paintQuickAdd(stage);
   else paintHome(stage);
 }
 
@@ -761,6 +962,461 @@ function paintPlanPick(stage){
   stage.appendChild(h("button",{class:"pbtn wide",type:"button",style:{marginTop:"8px"},onClick:()=>savePlanPick(),text:"Save"}));
 }
 
+function confList(){if(!Array.isArray(S.confidence))S.confidence=[];return S.confidence}
+const IDB_NAME="wx.rolodex.confidence",IDB_STORE="images",IDB_MEM="memories";
+const confUrlCache={};
+function revokeConfUrls(){
+  Object.keys(confUrlCache).forEach(k=>{try{URL.revokeObjectURL(confUrlCache[k])}catch(e){}delete confUrlCache[k]});
+}
+function confObjectUrl(id,blob){
+  if(confUrlCache[id])return confUrlCache[id];
+  const u=URL.createObjectURL(blob);
+  confUrlCache[id]=u;
+  return u;
+}
+function idbOpen(){
+  return new Promise((resolve,reject)=>{
+    if(!window.indexedDB){reject(new Error("no-idb"));return}
+    const req=indexedDB.open(IDB_NAME,2);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains(IDB_STORE))db.createObjectStore(IDB_STORE);
+      if(!db.objectStoreNames.contains(IDB_MEM))db.createObjectStore(IDB_MEM);
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+function idbPut(id,blob,store){
+  store=store||IDB_STORE;
+  return idbOpen().then(db=>new Promise((resolve,reject)=>{
+    const tx=db.transaction(store,"readwrite");
+    tx.objectStore(store).put(blob,id);
+    tx.oncomplete=()=>{try{db.close()}catch(e){}resolve()};
+    tx.onerror=()=>reject(tx.error||new Error("idb-put"));
+  }));
+}
+function idbGet(id,store){
+  store=store||IDB_STORE;
+  return idbOpen().then(db=>new Promise((resolve,reject)=>{
+    const tx=db.transaction(store,"readonly");
+    const req=tx.objectStore(store).get(id);
+    req.onsuccess=()=>resolve(req.result||null);
+    req.onerror=()=>reject(req.error);
+    tx.oncomplete=()=>{try{db.close()}catch(e){}};
+  }));
+}
+function idbDel(id,store){
+  store=store||IDB_STORE;
+  return idbOpen().then(db=>new Promise((resolve,reject)=>{
+    const tx=db.transaction(store,"readwrite");
+    tx.objectStore(store).delete(id);
+    tx.oncomplete=()=>{try{db.close()}catch(e){}resolve()};
+    tx.onerror=()=>reject(tx.error);
+  }));
+}
+function idbClear(store){
+  store=store||IDB_STORE;
+  return idbOpen().then(db=>new Promise((resolve,reject)=>{
+    const tx=db.transaction(store,"readwrite");
+    tx.objectStore(store).clear();
+    tx.oncomplete=()=>{try{db.close()}catch(e){}resolve()};
+    tx.onerror=()=>reject(tx.error);
+  }));
+}
+function blobToDataURL(blob){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>resolve(r.result);
+    r.onerror=reject;
+    r.readAsDataURL(blob);
+  });
+}
+function dataURLToBlob(url){
+  return fetch(url).then(r=>r.blob());
+}
+function resizeConfidencePhoto(file){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      try{
+        let w=img.width,h=img.height,max=1400;
+        if(Math.max(w,h)>max){const s=max/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s)}
+        const canvas=document.createElement("canvas");
+        canvas.width=Math.max(1,w);canvas.height=Math.max(1,h);
+        canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(b=>b?resolve(b):reject(new Error("blob")),"image/jpeg",0.8);
+      }catch(err){URL.revokeObjectURL(url);reject(err)}
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("decode"))};
+    img.src=url;
+  });
+}
+async function gatherConfidenceExport(){
+  const items=[];
+  for(const m of confList()){
+    const rec={id:m.id,caption:m.caption||"",added:m.added||0};
+    try{const blob=await idbGet(m.id);if(blob)rec.photo=await blobToDataURL(blob)}catch(e){}
+    items.push(rec);
+  }
+  return items;
+}
+async function importConfidencePhotos(raw){
+  revokeConfUrls();
+  try{await idbClear()}catch(e){}
+  if(!Array.isArray(raw))return;
+  for(const item of raw){
+    if(!item||!item.id||!item.photo)continue;
+    try{
+      const blob=typeof item.photo==="string"?await dataURLToBlob(item.photo):item.photo;
+      await idbPut(item.id,blob);
+    }catch(e){}
+  }
+}
+async function addConfidenceFiles(fileList){
+  if(!unlocked)return;
+  const files=[...fileList].filter(f=>f&&((f.type&&f.type.indexOf("image/")===0)||/\.(jpe?g|png|gif|webp|heic|heif|bmp)$/i.test(f.name||"")));
+  if(!files.length){alert("No photos could be added.");return}
+  let ok=0,fail=0;
+  for(const file of files){
+    try{
+      const blob=await resizeConfidencePhoto(file);
+      const id="c"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+      await idbPut(id,blob);
+      confList().unshift({id,caption:"",added:Date.now()});
+      save();
+      ok++;
+    }catch(err){
+      fail++;
+      const quota=err&&(err.name==="QuotaExceededError"||/quota|full/i.test(String(err)));
+      if(quota){alert("Couldn't save all of them — storage may be full. Try fewer or smaller photos.");break}
+    }
+  }
+  if(!ok&&fail)alert("Couldn't add those photos. Try a different image.");
+  if(unlocked&&cur().view==="confidence")paint();
+  else if(unlocked&&cur().view==="home")paint();
+}
+function paintConfidence(stage){
+  if(!unlocked){paintLock();return}
+  closeConfView();
+  const items=confList();
+  const file=h("input",{type:"file",accept:"image/*",multiple:"",style:{display:"none"}});
+  file.addEventListener("change",()=>{const list=[...file.files];file.value="";if(list.length)addConfidenceFiles(list)});
+  stage.appendChild(headerEl({
+    back:true,
+    title:"Confidence",
+    action:()=>{if(!items.length){alert("Add one first.");return}openConfView(Math.floor(Math.random()*items.length));buzz()},
+    actionLabel:"Shuffle",
+    actionText:"⇄",
+    action2:()=>{file.click();buzz()},
+    actionLabel2:"Add",
+    actionIcon2:svgIcon("M12 5v14M5 12h14",20)
+  }));
+  stage.appendChild(file);
+  if(!items.length){
+    stage.appendChild(h("div",{class:"card empty",text:"Add screenshots of kind words. They're only on this device, behind your passcode."}));
+    return;
+  }
+  const grid=h("div",{class:"conf-grid"});
+  items.forEach((m,i)=>{
+    const btn=h("button",{type:"button",class:"conf-thumb","aria-label":m.caption||"Saved photo",onClick:()=>{buzz();openConfView(i)}});
+    grid.appendChild(btn);
+    idbGet(m.id).then(blob=>{
+      if(!unlocked||cur().view!=="confidence"||!blob)return;
+      const img=h("img",{alt:m.caption||""});
+      img.src=confObjectUrl(m.id,blob);
+      btn.appendChild(img);
+    }).catch(()=>{});
+  });
+  stage.appendChild(grid);
+}
+
+let confViewIdx=0,confSwipeX=null;
+function closeConfView(){
+  const el=document.getElementById("confview");
+  if(el){el.classList.remove("on");el.innerHTML=""}
+}
+function openConfView(idx){
+  if(!unlocked)return;
+  const items=confList();
+  if(!items.length)return;
+  confViewIdx=((idx%items.length)+items.length)%items.length;
+  let el=document.getElementById("confview");
+  if(!el){el=h("div",{id:"confview"});document.body.appendChild(el)}
+  renderConfView();
+}
+function renderConfView(){
+  if(!unlocked){closeConfView();return}
+  const items=confList();
+  const el=document.getElementById("confview");
+  if(!el||!items.length){closeConfView();return}
+  if(confViewIdx<0)confViewIdx=0;
+  if(confViewIdx>=items.length)confViewIdx=items.length-1;
+  const m=items[confViewIdx];
+  el.innerHTML="";
+  el.classList.add("on");
+  const top=h("div",{class:"cv-top"});
+  const close=h("button",{class:"navbtn",type:"button","aria-label":"Close",onClick:()=>{buzz();closeConfView()}});
+  close.appendChild(svgIcon("M18 6L6 18M6 6l12 12",20));
+  top.appendChild(close);
+  top.appendChild(h("div",{class:"titles"},[h("h2",{text:(confViewIdx+1)+" / "+items.length})]));
+  const shuf=h("button",{class:"navbtn",type:"button","aria-label":"Shuffle",onClick:()=>{
+    buzz();
+    if(items.length<2)return;
+    let n=confViewIdx;
+    while(n===confViewIdx)n=Math.floor(Math.random()*items.length);
+    openConfView(n);
+  },text:"⇄"});
+  const del=h("button",{class:"navbtn",type:"button","aria-label":"Delete",onClick:()=>deleteConfidence(m.id)});
+  del.appendChild(svgIcon("M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6",18));
+  top.appendChild(shuf);top.appendChild(del);
+  el.appendChild(top);
+  const stage=h("div",{class:"cv-stage"});
+  const img=h("img",{alt:m.caption||""});
+  stage.appendChild(img);
+  idbGet(m.id).then(blob=>{if(blob)img.src=confObjectUrl(m.id,blob)}).catch(()=>{});
+  let x0=null;
+  stage.addEventListener("touchstart",e=>{if(e.changedTouches[0])x0=e.changedTouches[0].clientX}, {passive:true});
+  stage.addEventListener("touchend",e=>{
+    if(x0==null||!e.changedTouches[0])return;
+    const dx=e.changedTouches[0].clientX-x0;x0=null;
+    if(Math.abs(dx)<50)return;
+    if(dx<0&&confViewIdx<items.length-1){confViewIdx++;renderConfView()}
+    else if(dx>0&&confViewIdx>0){confViewIdx--;renderConfView()}
+  }, {passive:true});
+  el.appendChild(stage);
+  const cap=h("input",{class:"cv-cap",type:"text",placeholder:"Add a caption",value:m.caption||"",autocomplete:"off"});
+  cap.addEventListener("change",()=>{m.caption=cap.value.trim();save()});
+  cap.addEventListener("blur",()=>{m.caption=cap.value.trim();save()});
+  el.appendChild(cap);
+}
+function deleteConfidence(id){
+  if(!confirm("Delete this photo?"))return;
+  const items=confList();
+  const at=items.findIndex(x=>x.id===id);
+  S.confidence=items.filter(x=>x.id!==id);save();
+  if(confUrlCache[id]){try{URL.revokeObjectURL(confUrlCache[id])}catch(e){}delete confUrlCache[id]}
+  idbDel(id).catch(()=>{});
+  if(!S.confidence.length){closeConfView();if(cur().view==="confidence")paint();return}
+  if(at>=0)openConfView(Math.min(at,S.confidence.length-1));
+}
+
+
+function memList(){if(!Array.isArray(S.memories))S.memories=[];return S.memories}
+function memoriesFor(personId){return memList().filter(m=>m.personId&&m.personId===personId)}
+function memFilterId(){const v=cur();return v&&v.view==="memories"?v.personId||null:null}
+function visibleMemories(){
+  const fid=memFilterId();
+  const all=memList();
+  return fid?all.filter(m=>m.personId===fid):all;
+}
+function memoriesOpen(){
+  const el=document.getElementById("memview");
+  return cur().view==="memories"||!!(el&&el.classList.contains("on"));
+}
+async function gatherMemoriesExport(){
+  const items=[];
+  for(const m of memList()){
+    const rec={id:m.id,caption:m.caption||"",added:m.added||0};
+    if(m.personId)rec.personId=m.personId;
+    try{const blob=await idbGet(m.id,IDB_MEM);if(blob)rec.photo=await blobToDataURL(blob)}catch(e){}
+    items.push(rec);
+  }
+  return items;
+}
+async function importMemoriesPhotos(raw){
+  try{await idbClear(IDB_MEM)}catch(e){}
+  if(!Array.isArray(raw))return;
+  for(const item of raw){
+    if(!item||!item.id||!item.photo)continue;
+    try{
+      const blob=typeof item.photo==="string"?await dataURLToBlob(item.photo):item.photo;
+      await idbPut(item.id,blob,IDB_MEM);
+    }catch(e){}
+  }
+}
+async function addMemoryFiles(fileList,personId){
+  if(!unlocked)return;
+  const files=[...fileList].filter(f=>f&&((f.type&&f.type.indexOf("image/")===0)||/\.(jpe?g|png|gif|webp|heic|heif|bmp)$/i.test(f.name||"")));
+  if(!files.length){alert("No photos could be added.");return}
+  let ok=0,fail=0;
+  for(const file of files){
+    try{
+      const blob=await resizeConfidencePhoto(file);
+      const id="m"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+      await idbPut(id,blob,IDB_MEM);
+      const rec={id,caption:"",added:Date.now()};
+      if(personId)rec.personId=personId;
+      memList().unshift(rec);
+      save();
+      ok++;
+    }catch(err){
+      fail++;
+      const quota=err&&(err.name==="QuotaExceededError"||/quota|full/i.test(String(err)));
+      if(quota){alert("Couldn't save all of them — storage may be full. Try fewer or smaller photos.");break}
+    }
+  }
+  if(!ok&&fail)alert("Couldn't add those photos. Try a different image.");
+  if(unlocked&&cur().view==="memories")paint();
+  else if(unlocked&&cur().view==="home")paint();
+}
+function unlinkMemoriesFor(personId){
+  let changed=false;
+  for(const m of memList()){
+    if(m.personId===personId){delete m.personId;changed=true}
+  }
+  if(changed)save();
+}
+function paintMemories(stage,personId){
+  if(!unlocked){paintLock();return}
+  closeMemView();
+  memRevealed=false;
+  const person=personId?byId(personId):null;
+  const items=personId?memoriesFor(personId):memList();
+  const file=h("input",{type:"file",accept:"image/*",multiple:"",style:{display:"none"}});
+  file.addEventListener("change",()=>{const list=[...file.files];file.value="";if(list.length)addMemoryFiles(list,person?person.id:null)});
+  stage.appendChild(headerEl({
+    back:true,
+    eyebrow:person?person.name:"Private",
+    title:"Memories",
+    action:()=>{if(!items.length){alert("Add one first.");return}openMemView(Math.floor(Math.random()*items.length));buzz()},
+    actionLabel:"Shuffle",
+    actionText:"⇄",
+    action2:()=>{file.click();buzz()},
+    actionLabel2:"Add",
+    actionIcon2:svgIcon("M12 5v14M5 12h14",20)
+  }));
+  stage.appendChild(file);
+  if(!items.length){
+    stage.appendChild(h("div",{class:"card empty",text:person?("No memories linked to "+person.name+" yet. Tap + to add one."):"A private album. Thumbnails stay blurred until you open one and tap to reveal."}));
+    return;
+  }
+  const grid=h("div",{class:"conf-grid"});
+  items.forEach((m,i)=>{
+    const btn=h("button",{type:"button",class:"conf-thumb","aria-label":m.caption||"Memory",onClick:()=>{buzz();memRevealed=false;openMemView(i)}});
+    grid.appendChild(btn);
+    idbGet(m.id,IDB_MEM).then(blob=>{
+      if(!unlocked||cur().view!=="memories"||!blob)return;
+      if(personId&&cur().personId!==personId)return;
+      const img=h("img",{alt:"",class:"mem-blur"});
+      img.src=confObjectUrl(m.id,blob);
+      btn.appendChild(img);
+    }).catch(()=>{});
+  });
+  stage.appendChild(grid);
+}
+
+let memViewIdx=0,memRevealed=false,memPickOpen=false,memPickQ="";
+function closeMemView(){
+  memRevealed=false;memPickOpen=false;memPickQ="";
+  const el=document.getElementById("memview");
+  if(el){el.classList.remove("on");el.innerHTML=""}
+}
+function openMemView(idx){
+  if(!unlocked)return;
+  const items=visibleMemories();
+  if(!items.length)return;
+  memViewIdx=((idx%items.length)+items.length)%items.length;
+  let el=document.getElementById("memview");
+  if(!el){el=h("div",{id:"memview"});document.body.appendChild(el)}
+  renderMemView();
+}
+function renderMemView(){
+  if(!unlocked){closeMemView();return}
+  const items=visibleMemories();
+  const el=document.getElementById("memview");
+  if(!el||!items.length){closeMemView();return}
+  if(memViewIdx<0)memViewIdx=0;
+  if(memViewIdx>=items.length)memViewIdx=items.length-1;
+  const m=items[memViewIdx];
+  const linked=m.personId?byId(m.personId):null;
+  el.innerHTML="";
+  el.classList.add("on");
+  const top=h("div",{class:"cv-top"});
+  const close=h("button",{class:"navbtn",type:"button","aria-label":"Close",onClick:()=>{buzz();closeMemView()}});
+  close.appendChild(svgIcon("M18 6L6 18M6 6l12 12",20));
+  top.appendChild(close);
+  top.appendChild(h("div",{class:"titles"},[h("h2",{text:(memViewIdx+1)+" / "+items.length})]));
+  const shuf=h("button",{class:"navbtn",type:"button","aria-label":"Shuffle",onClick:()=>{
+    buzz();
+    if(items.length<2)return;
+    let n=memViewIdx;
+    while(n===memViewIdx)n=Math.floor(Math.random()*items.length);
+    memRevealed=false;memPickOpen=false;openMemView(n);
+  },text:"⇄"});
+  const del=h("button",{class:"navbtn",type:"button","aria-label":"Delete",onClick:()=>deleteMemory(m.id)});
+  del.appendChild(svgIcon("M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6",18));
+  top.appendChild(shuf);top.appendChild(del);
+  el.appendChild(top);
+  const stage=h("div",{class:"cv-stage"});
+  const img=h("img",{alt:"",class:memRevealed?"":"mem-blur"});
+  stage.appendChild(img);
+  if(!memRevealed)stage.appendChild(h("div",{class:"cv-hint",text:"Tap to reveal"}));
+  idbGet(m.id,IDB_MEM).then(blob=>{if(blob)img.src=confObjectUrl(m.id,blob)}).catch(()=>{});
+  let x0=null,swiped=false;
+  stage.addEventListener("touchstart",e=>{if(e.changedTouches[0])x0=e.changedTouches[0].clientX}, {passive:true});
+  stage.addEventListener("touchend",e=>{
+    if(x0==null||!e.changedTouches[0])return;
+    const dx=e.changedTouches[0].clientX-x0;x0=null;
+    if(Math.abs(dx)<50)return;
+    swiped=true;
+    memRevealed=false;memPickOpen=false;
+    if(dx<0&&memViewIdx<items.length-1){memViewIdx++;renderMemView()}
+    else if(dx>0&&memViewIdx>0){memViewIdx--;renderMemView()}
+  }, {passive:true});
+  stage.addEventListener("click",()=>{
+    if(swiped){swiped=false;return}
+    memRevealed=!memRevealed;buzz();renderMemView();
+  });
+  el.appendChild(stage);
+  const cap=h("input",{class:"cv-cap",type:"text",placeholder:"Add a caption",value:m.caption||"",autocomplete:"off"});
+  cap.addEventListener("change",()=>{m.caption=cap.value.trim();save()});
+  cap.addEventListener("blur",()=>{m.caption=cap.value.trim();save()});
+  el.appendChild(cap);
+  const link=h("button",{class:"pbtn cv-link",type:"button",style:{marginTop:"8px"},text:linked?("With "+linked.name):"Link to someone"});
+  link.addEventListener("click",()=>{memPickOpen=!memPickOpen;memPickQ="";buzz();renderMemView()});
+  el.appendChild(link);
+  if(linked){
+    const un=h("button",{class:"textbtn",type:"button",style:{margin:"4px auto 0"},text:"Unlink",onClick:()=>{
+      delete m.personId;save();memPickOpen=false;buzz();
+      if(memFilterId()&&cur().view==="memories"){closeMemView();paint();return}
+      renderMemView();
+    }});
+    el.appendChild(un);
+  }
+  if(memPickOpen){
+    const box=h("div",{class:"cv-pick"});
+    const search=h("input",{type:"search",placeholder:"Search people",value:memPickQ||"",autocomplete:"off",style:{margin:"8px 8px 0",width:"calc(100% - 16px)"}});
+    search.addEventListener("input",()=>{memPickQ=search.value;renderMemView()});
+    box.appendChild(search);
+    const q=normPlace(memPickQ);
+    const matches=sortPeople(people().filter(p=>!q||normPlace(p.name).includes(q)||normPlace(p.city).includes(q))).slice(0,12);
+    if(!matches.length)box.appendChild(h("div",{class:"empty",style:{padding:"12px"},text:"No one matches."}));
+    matches.forEach(p=>{
+      const row=h("button",{class:"row",type:"button",onClick:()=>{
+        m.personId=p.id;save();memPickOpen=false;memPickQ="";buzz();renderMemView();
+      }});
+      row.appendChild(avatarEl(p,32));
+      row.appendChild(h("div",{class:"txt"},[h("div",{class:"name",text:p.name}),h("div",{class:"sub",text:[p.city,p.country].filter(Boolean).join(", ")})]));
+      box.appendChild(row);
+    });
+    el.appendChild(box);
+  }
+}
+function deleteMemory(id){
+  if(!confirm("Delete this memory?"))return;
+  const items=visibleMemories();
+  const at=items.findIndex(x=>x.id===id);
+  S.memories=memList().filter(x=>x.id!==id);save();
+  if(confUrlCache[id]){try{URL.revokeObjectURL(confUrlCache[id])}catch(e){}delete confUrlCache[id]}
+  idbDel(id,IDB_MEM).catch(()=>{});
+  const left=visibleMemories();
+  if(!left.length){closeMemView();if(cur().view==="memories")paint();return}
+  if(at>=0){memRevealed=false;openMemView(Math.min(at,left.length-1))}
+}
+
 function paintHome(stage){
   stage.appendChild(headerEl({
     title:"Wx",
@@ -775,6 +1431,35 @@ function paintHome(stage){
     actionIcon3:svgIcon("M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7zM19.4 13a7.7 7.7 0 0 0 .1-2l2-1.5-2-3.5-2.4 1a7.6 7.6 0 0 0-1.7-1L15 4h-4l-.4 2.5a7.6 7.6 0 0 0-1.7 1L6.5 6.5l-2 3.5 2 1.5a7.7 7.7 0 0 0 .1 2l-2 1.5 2 3.5 2.4-1a7.6 7.6 0 0 0 1.7 1L11 22h4l.4-2.5a7.6 7.6 0 0 0 1.7-1l2.4 1 2-3.5-2-1.5z",18)
   }));
   stage.appendChild(paintPlanner());
+  const qaBtn=h("button",{type:"button",class:"conf-home",onClick:()=>{buzz();startQuickAdd()}});
+  qaBtn.appendChild(h("div",{class:"ico",text:"＋"}));
+  const qtxt=h("div",{class:"txt"});
+  qtxt.appendChild(h("div",{text:"Quick add new girl"}));
+  qtxt.appendChild(h("div",{class:"sub",text:"Name, city, and how the approach went"}));
+  qaBtn.appendChild(qtxt);
+  qaBtn.appendChild(h("span",{class:"chev",text:"›"}));
+  stage.appendChild(qaBtn);
+  stage.appendChild(approachesCard());
+  const cn=confList().length;
+  const confBtn=h("button",{type:"button",class:"conf-home",onClick:()=>{buzz();go({view:"confidence"})}});
+  confBtn.appendChild(h("div",{class:"ico",text:"✨"}));
+  const ctxt=h("div",{class:"txt"});
+  ctxt.appendChild(h("div",{text:"Confidence"}));
+  ctxt.appendChild(h("div",{class:"sub",text:cn?(cn===1?"1 saved":cn+" saved"):"Save a few wins"}));
+  confBtn.appendChild(ctxt);
+  confBtn.appendChild(h("span",{class:"chev",text:"›"}));
+  if(cn)confBtn.appendChild(h("span",{class:"warnc",style:{color:"var(--accent)",background:"rgba(91,140,255,.14)"},text:String(cn)}));
+  stage.appendChild(confBtn);
+  const mn=memList().length;
+  const memBtn=h("button",{type:"button",class:"conf-home",onClick:()=>{buzz();go({view:"memories"})}});
+  memBtn.appendChild(h("div",{class:"ico",text:"◻"}));
+  const mtxt=h("div",{class:"txt"});
+  mtxt.appendChild(h("div",{text:"Memories"}));
+  mtxt.appendChild(h("div",{class:"sub",text:mn?(mn===1?"1 saved":mn+" saved"):"Private album"}));
+  memBtn.appendChild(mtxt);
+  memBtn.appendChild(h("span",{class:"chev",text:"›"}));
+  if(mn)memBtn.appendChild(h("span",{class:"warnc",style:{color:"var(--accent)",background:"rgba(91,140,255,.14)"},text:String(mn)}));
+  stage.appendChild(memBtn);
   const due=reachOut();
   if(due.length){
     stage.appendChild(h("div",{class:"section"},["Reach out",h("span",{text:String(due.length)})]));
@@ -891,7 +1576,7 @@ function paintProfile(stage,id){
     heroWrap,
     h("h2",{class:"pname",text:p.name}),
     h("div",{class:"ploc",text:flag(p.country)+"  "+[p.city,p.country].filter(Boolean).join(", ")}),
-    h("div",{style:{marginBottom:"16px",display:"flex",gap:"8px",justifyContent:"center",flexWrap:"wrap"}},[h("span",{class:"badge",text:"Tier "+p.tier}),p.metVia?h("span",{class:"via",text:p.metVia}):null])
+    h("div",{style:{marginBottom:"16px",display:"flex",gap:"8px",justifyContent:"center",flexWrap:"wrap"}},[h("span",{class:"badge",text:"Tier "+p.tier}),p.metVia?h("span",{class:"via",text:p.metVia}):null,memoriesFor(p.id).length?h("button",{type:"button",class:"via memchip",text:"Memories "+memoriesFor(p.id).length,onClick:()=>{buzz();go({view:"memories",personId:p.id})}}):null])
   ]);
   if(p.description)prof.appendChild(h("p",{class:"pdesc",text:p.description}));
   stage.appendChild(prof);
@@ -931,6 +1616,30 @@ function paintProfile(stage,id){
     n.textContent=p.notes;
     stage.appendChild(n);
   }
+  const ups=normalizeUpdates(p.updates);
+  const usec=h("div",{class:"section"});
+  usec.appendChild(h("span",{text:"Updates"}));
+  usec.appendChild(h("button",{type:"button",class:"textbtn",style:{margin:"0",padding:"0",color:"var(--accent)",fontSize:"13px",fontWeight:"700",letterSpacing:".08em",textTransform:"uppercase"},onClick:()=>{buzz();startUpdate(p,null)},text:"+ Update"}));
+  stage.appendChild(usec);
+  if(!ups.length){
+    stage.appendChild(h("div",{class:"card empty",style:{padding:"20px"},text:"No updates yet. Tap + Update to add one."}));
+  }else{
+    const ubox=h("div",{class:"card"});
+    ups.forEach(u=>{
+      const item=h("button",{type:"button",class:"upd"});
+      const when=h("div",{class:"when"});
+      when.appendChild(h("b",{text:fmtDateKey(u.date)}));
+      if(u.type)when.appendChild(h("span",{class:"badge",text:UPDATE_TYPE_LABEL[u.type]||u.type}));
+      if(u.type==="firstMeet"&&u.outcome)when.appendChild(h("span",{class:"opill "+u.outcome,text:OUTCOME_LABEL[u.outcome]||u.outcome}));
+      item.appendChild(when);
+      if(u.where)item.appendChild(h("div",{class:"where",text:u.where}));
+      if(u.text)item.appendChild(h("div",{class:"body",text:u.text}));
+      item.addEventListener("click",()=>{buzz();startUpdate(p,u)});
+      ubox.appendChild(item);
+    });
+    stage.appendChild(ubox);
+  }
+
   const log=p.contactLog||[];
   stage.appendChild(h("div",{class:"section",text:"History"}));
   const box=h("div",{class:"card"});
@@ -943,6 +1652,252 @@ function paintProfile(stage,id){
     box.appendChild(ul);
   }
   stage.appendChild(box);
+}
+
+
+function startUpdate(p,u){
+  updDraft={
+    personId:p.id,
+    id:u&&u.id?u.id:null,
+    date:u&&u.date?u.date:dateKey(new Date()),
+    type:u&&u.type?u.type:"",
+    text:u&&u.text?u.text:"",
+    where:u&&u.where?u.where:"",
+    outcome:u&&u.outcome?u.outcome:""
+  };
+  go({view:"update",id:p.id,updateId:updDraft.id});
+}
+function saveUpdate(){
+  if(!updDraft)return;
+  const p=byId(updDraft.personId);
+  if(!p)return;
+  const rec=normalizeUpdate({
+    id:updDraft.id||newUpdId(),
+    date:updDraft.date||dateKey(new Date()),
+    type:updDraft.type||"",
+    text:(updDraft.text||"").trim(),
+    where:updDraft.where||"",
+    outcome:updDraft.outcome||""
+  });
+  if(!Array.isArray(p.updates))p.updates=[];
+  const i=p.updates.findIndex(x=>x.id===rec.id);
+  const prev=i>=0?p.updates[i]:null;
+  if(i>=0)p.updates[i]=rec;else p.updates.unshift(rec);
+  p.updates=normalizeUpdates(p.updates);
+  if(updateCountsAsContact(rec)){
+    const t=updateTs(rec);
+    if(t>(+p.lastContacted||0))p.lastContacted=t;
+  }else if(prev&&updateCountsAsContact(prev)){
+    applyContactFromUpdates(p);
+  }
+  save();
+  updDraft=null;
+  if(cur().view==="update")nav.pop();
+  render("back");
+}
+function deleteUpdate(){
+  if(!updDraft||!updDraft.id)return;
+  if(!confirm("Delete this update?"))return;
+  const p=byId(updDraft.personId);
+  if(!p)return;
+  p.updates=(p.updates||[]).filter(u=>u.id!==updDraft.id);
+  applyContactFromUpdates(p);
+  save();
+  updDraft=null;
+  if(cur().view==="update")nav.pop();
+  render("back");
+}
+function paintUpdate(stage,id){
+  const p=byId(id);
+  if(!p){stage.appendChild(headerEl({back:true,title:"Missing"}));stage.appendChild(h("div",{class:"card empty",text:"This entry is no longer here."}));return}
+  if(!updDraft||updDraft.personId!==id)updDraft={personId:id,id:null,date:dateKey(new Date()),type:"",text:"",where:"",outcome:""};
+  const isNew=!updDraft.id;
+  stage.appendChild(headerEl({back:true,eyebrow:p.name,title:isNew?"New update":"Edit update"}));
+
+  const date=h("input",{type:"date"});
+  date.value=updDraft.date||dateKey(new Date());
+  date.addEventListener("input",()=>{updDraft.date=date.value});
+  stage.appendChild(field("Date",date));
+
+  stage.appendChild(h("div",{class:"section",style:{marginTop:"4px"},text:"Type"}));
+  const types=h("div",{class:"chips"});
+  UPDATE_TYPES.forEach(t=>{
+    types.appendChild(h("button",{type:"button",class:"chip"+(updDraft.type===t.id?" on":""),text:t.label,onClick:()=>{
+      updDraft.type=updDraft.type===t.id?"":t.id;
+      if(updDraft.type!=="firstMeet"){updDraft.outcome="";updDraft.where=""}
+      buzz();paint();
+    }}));
+  });
+  stage.appendChild(types);
+
+  if(updDraft.type==="firstMeet"){
+    stage.appendChild(h("div",{class:"section",text:"How did it go?"}));
+    const pills=h("div",{class:"chips"});
+    OUTCOMES.forEach(o=>{
+      pills.appendChild(h("button",{type:"button",class:"chip opill "+o.id+(updDraft.outcome===o.id?" on":""),text:o.label,onClick:()=>{
+        updDraft.outcome=updDraft.outcome===o.id?"":o.id;buzz();paint();
+      }}));
+    });
+    stage.appendChild(pills);
+    const where=h("input",{type:"text",placeholder:"Cafe, street, event…"});
+    where.value=updDraft.where||"";
+    where.addEventListener("input",()=>{updDraft.where=where.value});
+    stage.appendChild(field("Where",where));
+  }
+
+  const note=h("textarea",{placeholder:"What happened?"});
+  note.value=updDraft.text||"";
+  note.addEventListener("input",()=>{updDraft.text=note.value});
+  stage.appendChild(field("Note",note));
+
+  stage.appendChild(h("button",{class:"pbtn wide",type:"button",style:{marginTop:"8px"},onClick:()=>{buzz();saveUpdate()},text:"Save"}));
+  if(!isNew)stage.appendChild(h("button",{class:"danger",type:"button",onClick:deleteUpdate,text:"Delete update"}));
+}
+
+function startQuickAdd(){
+  qaDraft={
+    name:"",
+    city:(S.settings&&S.settings.lastCity)||"",
+    country:(S.settings&&S.settings.lastCountry)||"",
+    where:"",
+    outcome:"",
+    text:"",
+    photo:null,
+    instagram:"",
+    whatsapp:""
+  };
+  go({view:"quickadd"});
+}
+function saveQuickAdd(){
+  if(!qaDraft)return;
+  const name=(qaDraft.name||"").trim()||"Unnamed";
+  const city=(qaDraft.city||"").trim();
+  const country=(qaDraft.country||"").trim();
+  if(!city||!country){alert("City and country are needed.");return}
+  if(!["great","okay","bad"].includes(qaDraft.outcome)){alert("How did the approach go?");return}
+  const upd=normalizeUpdate({
+    id:newUpdId(),
+    date:dateKey(new Date()),
+    type:"firstMeet",
+    text:(qaDraft.text||"").trim(),
+    where:(qaDraft.where||"").trim(),
+    outcome:qaDraft.outcome
+  });
+  const fields={
+    name,country,city,tier:2,description:"",
+    instagram:normIg(qaDraft.instagram),
+    whatsapp:(qaDraft.whatsapp||"").trim(),
+    notes:"",photo:qaDraft.photo||null,metVia:"In person",updates:[upd]
+  };
+  const c=lookupCoords(city,country)||peerCoords(city,country,null);
+  if(c){fields.lat=c.lat;fields.lng=c.lng}else{fields.lat=null;fields.lng=null}
+  const np={id:newId(),lastContacted:null,lastViewed:null,contactLog:[],...fields};
+  applyContactFromUpdates(np);
+  S.people.push(np);ensureCountry(country);rememberPlace(city,country);save();
+  qaDraft=null;
+  if(!hasCoords(np))finishSaveGeocode(np);
+  nav=[{view:"home"},{view:"country",country:np.country},{view:"city",country:np.country,city:np.city},{view:"profile",id:np.id}];
+  render("fwd");
+}
+function paintQuickAdd(stage){
+  if(!qaDraft)qaDraft={name:"",city:(S.settings&&S.settings.lastCity)||"",country:(S.settings&&S.settings.lastCountry)||"",where:"",outcome:"",text:"",photo:null,instagram:"",whatsapp:""};
+  stage.appendChild(headerEl({back:true,title:"Quick add"}));
+
+  const photoRow=h("div",{class:"photopick card"});
+  const av=avatarEl({name:qaDraft.name||"Unnamed",photo:qaDraft.photo},64);
+  av.id="qaAvatar";
+  photoRow.appendChild(av);
+  const photoBtns=h("div",{style:{flex:1,display:"flex",flexDirection:"column",gap:"8px"}});
+  const file=h("input",{type:"file",accept:"image/*",style:{display:"none"}});
+  const removeBtn=h("button",{class:"textbtn",type:"button",style:{margin:"0",display:qaDraft.photo?"block":"none"},text:"Remove photo"});
+  removeBtn.addEventListener("click",()=>{
+    qaDraft.photo=null;
+    const slot=document.getElementById("qaAvatar");
+    if(slot){slot.innerHTML="";slot.textContent=initials(qaDraft.name||"Unnamed");slot.style.background=avatarColor(qaDraft.name||"Unnamed")}
+    removeBtn.style.display="none";
+  });
+  const pick=h("button",{class:"pbtn",type:"button",style:{margin:"0"},text:qaDraft.photo?"Change photo":"Add photo"});
+  pick.addEventListener("click",()=>file.click());
+  file.addEventListener("change",()=>{
+    const f=file.files&&file.files[0];file.value="";
+    if(!f)return;
+    resizePhoto(f).then(url=>{
+      qaDraft.photo=url;
+      const slot=document.getElementById("qaAvatar");
+      if(slot){slot.innerHTML="";slot.appendChild(h("img",{src:url,alt:""}))}
+      removeBtn.style.display="block";
+      pick.textContent="Change photo";
+    }).catch(()=>alert("Couldn't use that photo."));
+  });
+  photoBtns.appendChild(pick);photoBtns.appendChild(removeBtn);photoBtns.appendChild(file);
+  photoRow.appendChild(photoBtns);
+  stage.appendChild(photoRow);
+
+  const name=h("input",{type:"text",placeholder:"Optional"});
+  name.value=qaDraft.name||"";
+  name.addEventListener("input",()=>{
+    qaDraft.name=name.value;
+    const slot=document.getElementById("qaAvatar");
+    if(slot&&!qaDraft.photo){slot.textContent=initials(qaDraft.name||"Unnamed");slot.style.background=avatarColor(qaDraft.name||"Unnamed")}
+  });
+  stage.appendChild(field("Name",name));
+
+  const cityListId="qaCities";
+  const city=h("input",{type:"text",placeholder:"City",list:cityListId,autocomplete:"off"});
+  city.value=qaDraft.city||"";
+  const cityList=h("datalist",{id:cityListId});
+  uniqueCities().forEach(c=>cityList.appendChild(h("option",{value:c})));
+  const onCity=()=>{
+    qaDraft.city=city.value;
+    const inferred=countryForCity(city.value);
+    if(inferred){qaDraft.country=inferred;const co=document.getElementById("qaCountry");if(co)co.value=inferred}
+  };
+  city.addEventListener("input",onCity);
+  city.addEventListener("change",onCity);
+  const cityField=field("City",city);
+  cityField.appendChild(cityList);
+  stage.appendChild(cityField);
+
+  const coListId="qaCountries";
+  const country=h("input",{type:"text",placeholder:"Country",list:coListId,autocomplete:"off",id:"qaCountry"});
+  country.value=qaDraft.country||"";
+  country.addEventListener("input",()=>{qaDraft.country=country.value});
+  const coList=h("datalist",{id:coListId});
+  uniqueCountries().forEach(c=>coList.appendChild(h("option",{value:c})));
+  const coField=field("Country",country);
+  coField.appendChild(coList);
+  stage.appendChild(coField);
+
+  const where=h("input",{type:"text",placeholder:"Cafe, street, event…"});
+  where.value=qaDraft.where||"";
+  where.addEventListener("input",()=>{qaDraft.where=where.value});
+  stage.appendChild(field("Where met",where));
+
+  stage.appendChild(h("div",{class:"section",text:"Approach outcome"}));
+  const pills=h("div",{class:"chips"});
+  OUTCOMES.forEach(o=>{
+    pills.appendChild(h("button",{type:"button",class:"chip opill "+o.id+(qaDraft.outcome===o.id?" on":""),text:o.label,onClick:()=>{
+      qaDraft.outcome=qaDraft.outcome===o.id?"":o.id;buzz();paint();
+    }}));
+  });
+  stage.appendChild(pills);
+
+  const note=h("textarea",{placeholder:"A short note"});
+  note.value=qaDraft.text||"";
+  note.addEventListener("input",()=>{qaDraft.text=note.value});
+  stage.appendChild(field("Note",note));
+
+  const ig=h("input",{type:"text",placeholder:"username"});
+  ig.value=qaDraft.instagram||"";
+  ig.addEventListener("input",()=>{qaDraft.instagram=ig.value});
+  stage.appendChild(field("Instagram",ig));
+
+  const wa=h("input",{type:"tel",placeholder:"Number with country code"});
+  wa.value=qaDraft.whatsapp||"";
+  wa.addEventListener("input",()=>{qaDraft.whatsapp=wa.value});
+  stage.appendChild(field("WhatsApp",wa));
+
+  stage.appendChild(h("button",{class:"pbtn wide",type:"button",style:{marginTop:"8px"},onClick:()=>{buzz();saveQuickAdd()},text:"Save"}));
 }
 
 function startEdit(p,pre){
@@ -1093,14 +2048,14 @@ function saveDraft(){
   if(draft.id){
     const p=byId(draft.id);
     if(!p)return;
-    Object.assign(p,fields);ensureCountry(country);save();
+    Object.assign(p,fields);ensureCountry(country);rememberPlace(city,country);save();
     draft=null;
     if(!hasCoords(p))finishSaveGeocode(p);
     if(cur().view==="edit")nav.pop();
     render("back");
   }else{
-    const np={id:newId(),lastContacted:null,lastViewed:null,contactLog:[],...fields};
-    S.people.push(np);ensureCountry(country);save();
+    const np={id:newId(),lastContacted:null,lastViewed:null,contactLog:[],updates:[],...fields};
+    S.people.push(np);ensureCountry(country);rememberPlace(city,country);save();
     draft=null;
     if(!hasCoords(np))finishSaveGeocode(np);
     nav=[{view:"home"},{view:"country",country:np.country},{view:"city",country:np.country,city:np.city},{view:"profile",id:np.id}];
@@ -1110,6 +2065,7 @@ function saveDraft(){
 
 function deletePerson(id){
   if(!confirm("Delete this person?"))return;
+  unlinkMemoriesFor(id);
   S.people=people().filter(p=>p.id!==id);
   save();draft=null;
   nav=nav.filter(s=>s.view!=="profile"&&s.view!=="edit"&&!(s.id&&s.id===id));
@@ -1348,6 +2304,8 @@ function paintSettings(stage){
   evCard.appendChild(addRow);
   stage.appendChild(evCard);
 
+  stage.appendChild(approachesCard());
+
   stage.appendChild(h("div",{class:"section",text:"Data"}));
   const data=h("div",{class:"card"});
   const row=h("div",{class:"pbtns"});
@@ -1363,7 +2321,7 @@ function paintSettings(stage){
         if(!obj||!Array.isArray(obj.people))throw new Error("format");
         if(!confirm("Replace all entries with this backup?"))return;
         const keep=readPasscode(S.settings.passcode);
-        S.people=obj.people;
+        S.people=normalizePeople(obj.people);
         S.countries=Array.isArray(obj.countries)?normalizeCountries(obj.countries):countriesFromPeople(obj.people);
         if(obj.settings){
           const st=defaultSettings();
@@ -1374,7 +2332,14 @@ function paintSettings(stage){
         S.settings.passcode=keep;
         S.plans=normalizePlans(obj.plans);
         S.events=obj.events!=null?normalizeEvents(obj.events):DEFAULT_EVENTS.slice();
-        save();nav=[{view:"home"}];render();
+        S.confidence=normalizeConfidence(obj.confidence);
+        const hasMem=Array.isArray(obj.memories);
+        if(hasMem)S.memories=normalizeMemories(obj.memories);
+        save();
+        const jobs=[importConfidencePhotos(obj.confidence)];
+        if(hasMem)jobs.push(importMemoriesPhotos(obj.memories));
+        Promise.all(jobs).then(()=>{nav=[{view:"home"}];render()}).catch(()=>{nav=[{view:"home"}];render()});
+        return;
       }catch(err){alert("Could not import that file.")}
     };
     reader.readAsText(f);
@@ -1382,6 +2347,13 @@ function paintSettings(stage){
   row.appendChild(h("button",{class:"pbtn",type:"button",onClick:()=>importer.click(),text:"Import"}));
   data.appendChild(row);
   data.appendChild(importer);
+  const inc=h("label",{class:"chk"});
+  const box=h("input",{type:"checkbox"});
+  box.checked=!!includeMemoriesExport;
+  box.addEventListener("change",()=>{includeMemoriesExport=box.checked});
+  inc.appendChild(box);
+  inc.appendChild(document.createTextNode("Include Memories"));
+  data.appendChild(inc);
   data.appendChild(h("button",{class:"danger",type:"button",onClick:()=>{
     if(!confirm("Replace everything with the sample entries? Your current list will be lost."))return;
     const keep=readPasscode(S.settings.passcode);
@@ -1389,17 +2361,27 @@ function paintSettings(stage){
     S.countries=countriesFromPeople(S.people);
     S.settings.thresholds={...DEFAULT_TH};
     S.settings.passcode=keep;
-    S.plans={};S.events=DEFAULT_EVENTS.slice();
-    save();nav=[{view:"home"}];render("back");
+    S.plans={};S.events=DEFAULT_EVENTS.slice();S.confidence=[];S.memories=[];
+    save();
+    Promise.all([idbClear(),idbClear(IDB_MEM)]).catch(()=>{}).finally(()=>{nav=[{view:"home"}];render("back")});
+    return;
   },text:"Reset to demo data"}));
   stage.appendChild(data);
 }
 
+let includeMemoriesExport=false;
 function exportData(){
-  const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
-  const a=h("a",{href:URL.createObjectURL(blob),download:"wx-backup.json"});
-  document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  const jobs=[gatherConfidenceExport()];
+  if(includeMemoriesExport)jobs.push(gatherMemoriesExport());
+  Promise.all(jobs).then(parts=>{
+    const payload=Object.assign({},S,{confidence:parts[0]});
+    delete payload.memories;
+    if(includeMemoriesExport)payload.memories=parts[1]||[];
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const a=h("a",{href:URL.createObjectURL(blob),download:"wx-backup.json"});
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  }).catch(()=>alert("Couldn't export right now."));
 }
 
 function beginPin(purpose){
@@ -1490,6 +2472,8 @@ function pinFail(repaint){
 
 function lockApp(){
   unlocked=false;
+  memRevealed=false;
+  memPickOpen=false;
   pinBuf="";
   pinPending=null;
   pinPurpose=hasPasscode()?"unlock":"set1";
@@ -1497,14 +2481,20 @@ function lockApp(){
 }
 
 let hiddenAt=0;
+function lockIfMemoriesBackgrounded(){
+  if(unlocked&&memoriesOpen()){lockApp();return true}
+  return false;
+}
 document.addEventListener("visibilitychange",()=>{
   if(document.hidden){
     hiddenAt=Date.now();
+    lockIfMemoriesBackgrounded();
   }else{
     if(unlocked&&hiddenAt&&(Date.now()-hiddenAt)>60000){lockApp();return}
     if(unlocked&&syncPlannerToday()&&cur().view==="home")render();
   }
 });
+window.addEventListener("pagehide",()=>{lockIfMemoriesBackgrounded()});
 window.addEventListener("pageshow",()=>{
   if(unlocked&&hiddenAt&&(Date.now()-hiddenAt)>60000)lockApp();
   else if(unlocked&&syncPlannerToday()&&cur().view==="home")render();
